@@ -19,22 +19,23 @@
             mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
-            brand: {
-              canvas: '#0c0a10',
-              surface: '#14101b',
-              surfaceElevated: '#1b1625',
-              surfaceHover: '#221b2f',
-              border: '#261f33',
-              borderHover: '#3d3251',
-              text: '#f6f3f9',
-              muted: '#9f95ad',
-              subtle: '#6b6378',
-              violet: '#B284BE',      // African Violet
-              violetHover: '#a16fab',
-              pastel: '#BBA3D9',      // Light Pastel Purple
-              pale: '#EDDAF2',        // Pale Purple
+            app: {
+              bg: '#0f0d14',
+              surface: '#171320',
+              surfaceElevated: '#201a2d',
+              surfaceHover: '#29213a',
+              border: '#2e263f',
+              borderHover: '#463b5e',
+              text: '#ffffff',
+              body: '#ece6f2',
+              muted: '#b2a8c0',
+              subtle: '#7d738c',
+              violet: '#B284BE',      // African Violet (Aksen Utama)
+              violetHover: '#c599d1',
+              pastel: '#D4BBF0',      // Light Pastel Purple
+              pale: '#F2E8FA',        // Pale Purple
               danger: '#ff8a80',
-              warning: '#f4c66a',
+              warning: '#ffd166',
               success: '#81c995',
             }
           }
@@ -45,10 +46,10 @@
 
   <style>
     body {
-      background-color: #0c0a10;
-      color: #f6f3f9;
+      background-color: #0f0d14;
+      color: #ece6f2;
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      background-image: radial-gradient(ellipse 80% 40% at 50% -15%, #20172e 0%, #0c0a10 70%);
+      background-image: radial-gradient(ellipse 80% 40% at 50% -10%, #251b38 0%, #0f0d14 70%);
       background-attachment: fixed;
     }
     button, a, select, input, textarea {
@@ -56,61 +57,63 @@
     }
     input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 1px #0c0a10, 0 0 0 3px #B284BE;
+      box-shadow: 0 0 0 1px #0f0d14, 0 0 0 3px #B284BE;
     }
-    .input-field {
-      background-color: #0e0b14;
-      border: 1px solid #261f33;
-      color: #f6f3f9;
-      transition: border-color 0.12s ease;
+    .field-input {
+      background-color: #120e1a;
+      border: 1px solid #2e263f;
+      color: #ffffff;
+      transition: border-color 0.15s ease;
     }
-    .input-field:focus {
+    .field-input:focus {
       border-color: #B284BE;
     }
     .custom-scrollbar::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 5px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: #0c0a10;
+      background: #0f0d14;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #261f33;
+      background: #2e263f;
       border-radius: 4px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-brand-canvas text-brand-text antialiased selection:bg-brand-violet selection:text-brand-canvas">
+<body class="min-h-screen flex flex-col bg-app-bg text-app-body antialiased selection:bg-app-violet selection:text-app-bg">
 
-  <!-- ================= TOP COMMAND BAR ================= -->
-  <header class="bg-brand-surface/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-30 px-4 sm:px-6">
-    <div class="max-w-6xl mx-auto flex items-center justify-between h-13 gap-4">
+  <!-- ================= TOP APP BAR ================= -->
+  <header class="bg-app-surface/95 backdrop-blur-md border-b border-app-border sticky top-0 z-30 px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-15 py-3 gap-4">
       
-      <!-- Brand with Flaticon Design-Element Star Mark -->
-      <div class="flex items-center gap-3 min-w-[180px]">
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-3 min-w-[200px]">
         <a href="admin.html" class="flex items-center gap-2.5" aria-label="Pngumpul">
-          <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#171220"/>
-            <circle cx="16" cy="16" r="10.5" stroke="#362d46" stroke-width="1"/>
+          <svg class="w-7 h-7 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#1f182b"/>
+            <circle cx="16" cy="16" r="10.5" stroke="#3d3254" stroke-width="1.2"/>
             <path d="M16 5.5C16 11.299 11.299 16 5.5 16C11.299 16 16 20.701 16 26.5C16 20.701 20.701 16 26.5 16C20.701 16 16 11.299 16 5.5Z" fill="#B284BE"/>
-            <circle cx="16" cy="16" r="2.75" fill="#EDDAF2"/>
+            <circle cx="16" cy="16" r="3" fill="#F2E8FA"/>
           </svg>
-          <span class="text-sm font-extrabold tracking-tight text-brand-text">
-            Pngumpul
-          </span>
-          <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-brand-surfaceElevated text-brand-subtle border border-brand-border ml-1">
-            Guru
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="text-base font-extrabold tracking-tight text-white">
+              Pngumpul
+            </span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-app-surfaceElevated text-app-pastel border border-app-border">
+              Panel Guru
+            </span>
+          </div>
         </a>
       </div>
 
-      <!-- Center Views Switcher -->
-      <nav class="hidden sm:flex items-center gap-1 font-mono text-xs" aria-label="Navigasi">
+      <!-- Navigation Tabs (Clear & Human-Friendly) -->
+      <nav class="hidden sm:flex items-center gap-1.5 text-sm font-medium" aria-label="Menu Utama">
         <button
           type="button"
           id="tab-btn-coursework"
           onclick="switchView('coursework')"
-          class="px-3 py-1.5 rounded-lg transition font-bold text-brand-canvas bg-brand-violet shadow-sm"
+          class="px-4 py-2 rounded-lg transition font-bold text-app-bg bg-app-violet shadow-sm"
         >
           Tugas Kelas
         </button>
@@ -118,50 +121,53 @@
           type="button"
           id="tab-btn-grading"
           onclick="switchView('grading')"
-          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated flex items-center gap-1.5"
+          class="px-4 py-2 rounded-lg transition text-app-muted hover:text-white hover:bg-app-surfaceElevated flex items-center gap-2"
         >
-          <span>Periksa Kiriman</span>
-          <span id="badge-pending-count" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-violet/20 text-brand-pale">2</span>
+          <span>Periksa Tugas</span>
+          <span id="badge-pending-count" class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-app-violet/20 text-app-pale">2</span>
         </button>
         <button
           type="button"
           id="tab-btn-gradebook"
           onclick="switchView('gradebook')"
-          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated"
+          class="px-4 py-2 rounded-lg transition text-app-muted hover:text-white hover:bg-app-surfaceElevated"
         >
-          Buku Nilai
+          Daftar Nilai
         </button>
         <button
           type="button"
           id="tab-btn-roster"
           onclick="switchView('roster')"
-          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated"
+          class="px-4 py-2 rounded-lg transition text-app-muted hover:text-white hover:bg-app-surfaceElevated"
         >
-          Siswa & Rombel
+          Data Siswa & Kelas
         </button>
       </nav>
 
-      <!-- Right: Action & Profile -->
-      <div class="flex items-center gap-2.5">
+      <!-- Right Action & Profile -->
+      <div class="flex items-center gap-3">
         <button
           type="button"
           onclick="openCreateTaskModal()"
-          class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+          class="px-4 py-2 rounded-lg bg-app-violet hover:bg-app-violetHover text-app-bg text-sm font-bold transition flex items-center gap-2 shadow-sm"
         >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          <span class="hidden md:inline">Tugas Baru</span>
+          <span class="hidden md:inline">Buat Tugas Baru</span>
         </button>
 
-        <!-- Teacher Avatar & Logout -->
-        <div class="flex items-center gap-2 pl-2 border-l border-brand-border text-xs">
-          <span class="hidden xl:inline text-brand-muted font-mono text-[11px]" id="user-display-name">Drs. Budi Santoso</span>
+        <!-- Teacher Identity & Logout -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-app-border text-sm">
+          <div class="hidden xl:block text-right leading-tight">
+            <span class="font-bold text-white block text-sm" id="user-display-name">Drs. Budi Santoso</span>
+            <span class="text-xs text-app-muted font-mono">NIP: 197505122002121001</span>
+          </div>
           <button
             type="button"
             onclick="handleLogout()"
-            class="p-1.5 text-brand-subtle hover:text-brand-danger hover:bg-brand-surfaceElevated rounded-lg transition"
-            title="Keluar"
+            class="p-2 text-app-muted hover:text-app-danger hover:bg-app-surfaceElevated rounded-lg transition"
+            title="Keluar dari akun"
             aria-label="Keluar"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -174,11 +180,11 @@
     </div>
 
     <!-- Mobile Sub-Navigation -->
-    <div class="sm:hidden flex items-center justify-around py-2 border-t border-brand-border text-xs font-mono">
-      <button onclick="switchView('coursework')" id="mob-btn-coursework" class="text-brand-violet font-bold">Tugas</button>
-      <button onclick="switchView('grading')" id="mob-btn-grading" class="text-brand-muted">Kiriman</button>
-      <button onclick="switchView('gradebook')" id="mob-btn-gradebook" class="text-brand-muted">Nilai</button>
-      <button onclick="switchView('roster')" id="mob-btn-roster" class="text-brand-muted">Rombel</button>
+    <div class="sm:hidden flex items-center justify-around py-2.5 border-t border-app-border text-xs font-semibold">
+      <button onclick="switchView('coursework')" id="mob-btn-coursework" class="text-app-violet font-bold">Tugas</button>
+      <button onclick="switchView('grading')" id="mob-btn-grading" class="text-app-muted">Periksa (2)</button>
+      <button onclick="switchView('gradebook')" id="mob-btn-gradebook" class="text-app-muted">Nilai</button>
+      <button onclick="switchView('roster')" id="mob-btn-roster" class="text-app-muted">Siswa</button>
     </div>
   </header>
 
@@ -188,39 +194,42 @@
     <!-- ================= VIEW 1: TUGAS KELAS ================= -->
     <section id="view-coursework" class="space-y-6">
       
-      <!-- Sub-Bar: Class Filter & Actions -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-brand-border">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-brand-muted">Kelas:</span>
+      <!-- Filter Bar -->
+      <div class="bg-app-surface border border-app-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <label for="class-filter-select" class="text-sm font-semibold text-white">
+            Pilih Kelas:
+          </label>
           <select
             id="class-filter-select"
             onchange="filterCoursework()"
-            class="input-field px-2.5 py-1 text-xs rounded-lg font-medium"
+            class="field-input px-3 py-2 text-sm rounded-lg font-medium"
           >
             <option value="all">Semua Kelas</option>
+            <!-- Populated dynamically -->
           </select>
         </div>
 
         <div class="flex items-center gap-3">
-          <div class="relative w-48 hidden sm:block">
+          <div class="relative w-full sm:w-64">
             <input
               type="text"
               id="coursework-search"
               oninput="searchCoursework(event)"
-              placeholder="Cari judul..."
-              class="input-field w-full text-xs rounded-lg pl-7 pr-3 py-1 placeholder:text-brand-subtle"
+              placeholder="Cari judul tugas..."
+              class="field-input w-full text-sm rounded-lg pl-9 pr-3 py-2 placeholder:text-app-subtle"
             />
-            <svg class="w-3.5 h-3.5 text-brand-subtle absolute left-2 top-1.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="w-4 h-4 text-app-subtle absolute left-3 top-2.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
           </div>
           <button
             type="button"
             onclick="syncFromApi()"
-            class="px-2.5 py-1 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border text-xs font-mono transition"
-            title="Sinkronkan dengan Server API"
+            class="px-3.5 py-2 rounded-lg bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel border border-app-border text-xs font-semibold transition"
+            title="Sinkronkan data dengan server"
           >
-            Sinkron API
+            Segarkan
           </button>
         </div>
       </div>
@@ -232,91 +241,95 @@
 
     </section>
 
-    <!-- ================= VIEW 2: PERIKSA & NILAI ================= -->
-    <section id="view-grading" class="hidden space-y-4">
+    <!-- ================= VIEW 2: PERIKSA & BERI NILAI ================= -->
+    <section id="view-grading" class="hidden space-y-5">
       
-      <div class="pb-2 border-b border-brand-border flex items-center justify-between">
+      <div class="flex items-center justify-between pb-3 border-b border-app-border">
         <div>
-          <h1 class="text-base font-bold text-brand-text">Antrean Periksa Kiriman</h1>
-          <p class="text-xs text-brand-muted">Review dan beri skor pada berkas jawaban siswa.</p>
+          <h1 class="text-lg font-bold text-white">Periksa Kiriman Tugas Siswa</h1>
+          <p class="text-sm text-app-muted mt-0.5">Pilih siswa di sebelah kiri untuk melihat jawaban, memeriksa berkas, dan memberi skor nilai.</p>
         </div>
-        <button onclick="syncFromApi()" class="text-xs font-mono text-brand-pastel hover:underline">
+        <button onclick="syncFromApi()" class="text-xs font-semibold text-app-pastel hover:underline">
           Segarkan Data &orarr;
         </button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left Submissions List (6 cols) -->
-        <div class="lg:col-span-6 bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
-          <div class="px-4 py-3 bg-brand-canvas border-b border-brand-border flex items-center justify-between text-xs font-mono">
-            <span>Daftar Kiriman Masuk</span>
-            <span class="text-brand-pastel font-bold" id="queue-pending-badge">0 Menunggu Nilai</span>
+        <!-- Left Column: Daftar Siswa yang Mengumpulkan (6 cols) -->
+        <div class="lg:col-span-5 bg-app-surface border border-app-border rounded-xl overflow-hidden flex flex-col">
+          <div class="px-4 py-3 bg-app-surfaceElevated border-b border-app-border flex items-center justify-between text-xs font-semibold">
+            <span class="text-white">Daftar Kiriman Masuk</span>
+            <span class="text-app-pastel" id="queue-pending-badge">0 Menunggu Nilai</span>
           </div>
 
-          <div id="submissions-list-container" class="divide-y divide-brand-border text-xs">
+          <div id="submissions-list-container" class="divide-y divide-app-border text-sm overflow-y-auto max-h-[580px] custom-scrollbar">
             <!-- Rendered dynamically -->
           </div>
         </div>
 
-        <!-- Right Side: The Grading Dossier Panel (6 cols) -->
-        <div class="lg:col-span-6 bg-brand-surface border border-brand-border rounded-xl p-5 space-y-4">
-          <div class="pb-3 border-b border-brand-border flex items-center justify-between">
-            <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Lembar Penilaian</h2>
-            <span id="console-class-badge" class="font-mono text-[11px] text-brand-pastel">-</span>
+        <!-- Right Column: Detail Tugas & Form Nilai (7 cols) -->
+        <div class="lg:col-span-7 bg-app-surface border border-app-border rounded-xl p-6 space-y-5">
+          <div class="pb-3 border-b border-app-border flex items-center justify-between">
+            <span class="text-xs font-mono uppercase tracking-wider text-app-pastel font-bold">Lembar Penilaian Siswa</span>
+            <span id="console-class-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-app-surfaceElevated text-app-pastel border border-app-border">-</span>
           </div>
 
-          <div class="space-y-0.5">
-            <h3 id="console-student-name" class="text-sm font-bold text-brand-text">-</h3>
-            <p id="console-task-title" class="text-xs text-brand-muted font-mono">-</p>
+          <div>
+            <h3 id="console-student-name" class="text-lg font-bold text-white">-</h3>
+            <p id="console-task-title" class="text-xs font-medium text-app-muted mt-0.5">-</p>
           </div>
 
-          <!-- Answer & File Preview -->
-          <div class="bg-brand-canvas p-3 rounded-lg border border-brand-border space-y-2 text-xs">
-            <span class="text-[10px] font-mono uppercase text-brand-subtle block">Jawaban Siswa:</span>
-            <p id="console-answer-text" class="text-brand-text italic text-[11px] leading-relaxed">
+          <!-- Answer & File Box -->
+          <div class="bg-[#120e1a] p-4 rounded-xl border border-app-border space-y-3">
+            <span class="text-xs font-semibold text-app-muted block">Catatan Jawaban Siswa:</span>
+            <p id="console-answer-text" class="text-white italic text-sm leading-relaxed">
               "-"
             </p>
-            <div class="pt-2 border-t border-brand-border flex items-center justify-between">
-              <div class="flex items-center gap-2 truncate">
-                <span id="console-file-tag" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-surfaceElevated text-brand-pastel border border-brand-border">FILE</span>
-                <span id="console-file-name" class="font-mono text-brand-pastel text-xs truncate max-w-[150px]">-</span>
+
+            <div class="pt-3 border-t border-app-border/80 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span id="console-file-tag" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-app-surfaceElevated text-app-pastel border border-app-border">BERKAS</span>
+                <span id="console-file-name" class="font-mono text-white text-xs truncate max-w-[200px]">-</span>
               </div>
               <div class="flex items-center gap-2">
                 <button
                   type="button"
                   id="console-preview-btn"
                   onclick="previewCurrentFile()"
-                  class="text-xs font-mono text-brand-pale bg-brand-surfaceElevated hover:bg-brand-surfaceHover px-2 py-1 rounded border border-brand-border flex items-center gap-1 transition"
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold text-app-bg bg-app-pastel hover:bg-white transition flex items-center gap-1.5 shadow-sm"
                 >
-                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <span>Lihat</span>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span>Lihat Berkas</span>
                 </button>
                 <a
                   id="console-download-btn"
                   href="#"
                   download
                   target="_blank"
-                  class="text-xs font-mono text-brand-pastel hover:underline flex items-center gap-1"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold text-app-muted hover:text-white bg-app-surfaceElevated border border-app-border transition flex items-center gap-1"
                 >
                   Unduh &darr;
                 </a>
               </div>
             </div>
           </div>
-          <!-- Form with Quick Presets -->
-          <form onsubmit="handleConsoleGradingSubmit(event)" class="space-y-3 pt-1 text-xs">
+
+          <!-- Form Nilai -->
+          <form onsubmit="handleConsoleGradingSubmit(event)" class="space-y-4 pt-1">
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <label for="console-score-input" class="block font-mono text-brand-muted">
-                  Skor Nilai (0 - 100)
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="console-score-input" class="block text-xs font-semibold text-white">
+                  Skor Nilai (0 sampai 100)
                 </label>
-                <!-- Quick Rubric Presets -->
-                <div class="flex items-center gap-1 font-mono text-[10px]">
-                  <button type="button" onclick="setPresetScore(100)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">100</button>
-                  <button type="button" onclick="setPresetScore(90)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">90</button>
-                  <button type="button" onclick="setPresetScore(85)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">85</button>
-                  <button type="button" onclick="setPresetScore(75)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">75</button>
+                <!-- Quick Rubric Buttons -->
+                <div class="flex items-center gap-1.5 text-xs font-mono">
+                  <span class="text-app-muted text-xs mr-1">Pilihan Cepat:</span>
+                  <button type="button" onclick="setPresetScore(100)" class="px-2 py-0.5 rounded bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel font-bold">100</button>
+                  <button type="button" onclick="setPresetScore(90)" class="px-2 py-0.5 rounded bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel font-bold">90</button>
+                  <button type="button" onclick="setPresetScore(85)" class="px-2 py-0.5 rounded bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel font-bold">85</button>
+                  <button type="button" onclick="setPresetScore(80)" class="px-2 py-0.5 rounded bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel font-bold">80</button>
+                  <button type="button" onclick="setPresetScore(75)" class="px-2 py-0.5 rounded bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel font-bold">75</button>
                 </div>
               </div>
               <input
@@ -325,26 +338,26 @@
                 min="0"
                 max="100"
                 required
-                placeholder="Contoh: 85"
-                class="input-field w-full px-3 py-2 text-sm font-bold font-mono text-brand-pastel rounded-lg"
+                placeholder="Masukkan nilai siswa..."
+                class="field-input w-full px-3.5 py-2.5 text-base font-bold font-mono text-white rounded-lg"
               />
             </div>
 
             <div>
-              <label for="console-feedback-input" class="block font-mono text-brand-muted mb-1">
-                Catatan Guru
+              <label for="console-feedback-input" class="block text-xs font-semibold text-white mb-1.5">
+                Catatan / Umpan Balik Guru untuk Siswa
               </label>
               <textarea
                 id="console-feedback-input"
                 rows="3"
-                placeholder="Tuliskan catatan evaluasi..."
-                class="input-field w-full p-2.5 text-xs rounded-lg leading-relaxed"
+                placeholder="Tuliskan catatan apresiasi, koreksi, atau evaluasi pengerjaan siswa..."
+                class="field-input w-full p-3 text-sm rounded-lg leading-relaxed text-white placeholder:text-app-subtle"
               ></textarea>
             </div>
 
             <button
               type="submit"
-              class="w-full py-2.5 px-4 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas font-bold text-xs transition shadow-sm"
+              class="w-full py-3 px-4 rounded-lg bg-app-violet hover:bg-app-violetHover text-app-bg font-bold text-sm transition shadow-sm"
             >
               Simpan & Publikasikan Nilai
             </button>
@@ -355,38 +368,36 @@
 
     </section>
 
-    <!-- ================= VIEW 3: BUKU NILAI ================= -->
+    <!-- ================= VIEW 3: DAFTAR NILAI ================= -->
     <section id="view-gradebook" class="hidden space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-brand-border">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-app-border">
         <div>
-          <h1 class="text-base font-bold text-brand-text">Buku Nilai Siswa</h1>
-          <p class="text-xs text-brand-muted">Rekap nilai akademik terintegrasi dengan kiriman siswa.</p>
+          <h1 class="text-lg font-bold text-white">Daftar Rekapitulasi Nilai Siswa</h1>
+          <p class="text-sm text-app-muted mt-0.5">Rekap nilai akademik siswa yang terhubung langsung dengan tugas dan pengumpulan.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            onclick="showToast('Data berhasil diekspor ke CSV.')"
-            class="px-3 py-1.5 rounded-lg bg-brand-surface hover:bg-brand-surfaceElevated border border-brand-border text-xs font-mono text-brand-text transition"
-          >
-            Ekspor CSV
-          </button>
-        </div>
+        <button
+          type="button"
+          onclick="showToast('Data nilai berhasil diekspor ke format CSV.')"
+          class="px-4 py-2 rounded-lg bg-app-surface hover:bg-app-surfaceElevated border border-app-border text-xs font-semibold text-white transition self-start sm:self-auto"
+        >
+          Ekspor CSV / Excel
+        </button>
       </div>
 
-      <div class="bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+      <div class="bg-app-surface border border-app-border rounded-xl overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-brand-canvas text-brand-pastel border-b border-brand-border font-mono text-[11px]">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-app-surfaceElevated text-app-pastel border-b border-app-border text-xs font-bold uppercase tracking-wider">
               <tr>
-                <th class="py-2.5 px-4">Nama Siswa</th>
-                <th class="py-2.5 px-4">Kelas</th>
-                <th class="py-2.5 px-4">Tugas 01</th>
-                <th class="py-2.5 px-4">Praktikum 03</th>
-                <th class="py-2.5 px-4">Rata-Rata</th>
-                <th class="py-2.5 px-4 text-right">Aksi</th>
+                <th class="py-3 px-4">Nama Lengkap Siswa</th>
+                <th class="py-3 px-4">Kelas</th>
+                <th class="py-3 px-4">Tugas 01 (CSS)</th>
+                <th class="py-3 px-4">Praktikum 03 (ERD)</th>
+                <th class="py-3 px-4">Rata-Rata</th>
+                <th class="py-3 px-4 text-right">Koreksi Nilai</th>
               </tr>
             </thead>
-            <tbody id="gradebook-tbody" class="divide-y divide-brand-border font-medium">
+            <tbody id="gradebook-tbody" class="divide-y divide-app-border font-medium">
               <!-- Rendered dynamically -->
             </tbody>
           </table>
@@ -394,61 +405,62 @@
       </div>
     </section>
 
-    <!-- ================= VIEW 4: SISWA & ROMBEL ================= -->
+    <!-- ================= VIEW 4: DATA SISWA & KELAS ================= -->
     <section id="view-roster" class="hidden space-y-6">
       
-      <div class="pb-3 border-b border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <!-- Top Actions Bar -->
+      <div class="pb-3 border-b border-app-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 class="text-base font-bold text-brand-text">Kelola Kelas & Siswa</h1>
-          <p class="text-xs text-brand-muted">Akses penuh untuk menambah kelas, siswa, dan rombel.</p>
+          <h1 class="text-lg font-bold text-white">Kelola Rombel & Data Siswa</h1>
+          <p class="text-sm text-app-muted mt-0.5">Tambahkan kelas baru atau daftarkan siswa ke dalam rombongan belajar.</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <button
             type="button"
             onclick="openAddClassModal()"
-            class="px-3 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border text-xs font-bold transition flex items-center gap-1.5"
+            class="px-3.5 py-2 rounded-lg bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel border border-app-border text-xs font-bold transition flex items-center gap-1.5"
           >
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>+ Tambah Kelas</span>
           </button>
           <button
             type="button"
             onclick="openAddStudentModal()"
-            class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+            class="px-3.5 py-2 rounded-lg bg-app-violet hover:bg-app-violetHover text-app-bg text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
           >
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>+ Tambah Siswa</span>
           </button>
         </div>
       </div>
 
       <!-- Classes Cards Grid -->
-      <div class="space-y-2">
-        <h2 class="text-xs font-mono uppercase text-brand-subtle">Daftar Rombongan Belajar</h2>
+      <div class="space-y-3">
+        <h2 class="text-xs font-mono uppercase tracking-wider text-app-pastel font-bold">Daftar Rombongan Belajar</h2>
         <div id="classes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- Rendered dynamically -->
         </div>
       </div>
 
       <!-- Students Table -->
-      <div class="space-y-2 pt-2">
+      <div class="space-y-3 pt-2">
         <div class="flex items-center justify-between">
-          <h2 class="text-xs font-mono uppercase text-brand-subtle">Daftar Siswa Terdaftar</h2>
-          <span class="text-xs font-mono text-brand-muted" id="roster-total-count">0 Siswa</span>
+          <h2 class="text-xs font-mono uppercase tracking-wider text-app-pastel font-bold">Daftar Siswa Terdaftar</h2>
+          <span class="text-xs font-mono text-app-muted" id="roster-total-count">0 Siswa</span>
         </div>
 
-        <div class="bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+        <div class="bg-app-surface border border-app-border rounded-xl overflow-hidden">
           <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-brand-canvas text-brand-pastel border-b border-brand-border font-mono text-[11px]">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-app-surfaceElevated text-app-pastel border-b border-app-border text-xs font-bold uppercase tracking-wider">
                 <tr>
-                  <th class="py-2.5 px-4">Nama Siswa</th>
-                  <th class="py-2.5 px-4">NISN</th>
-                  <th class="py-2.5 px-4">Kelas</th>
-                  <th class="py-2.5 px-4 text-right">Aksi</th>
+                  <th class="py-3 px-4">Nama Siswa</th>
+                  <th class="py-3 px-4">NISN</th>
+                  <th class="py-3 px-4">Kelas</th>
+                  <th class="py-3 px-4 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="students-tbody" class="divide-y divide-brand-border font-medium">
+              <tbody id="students-tbody" class="divide-y divide-app-border font-medium">
                 <!-- Rendered dynamically -->
               </tbody>
             </table>
@@ -463,40 +475,40 @@
   <!-- ================= MODAL 1: BUAT / EDIT TUGAS ================= -->
   <div
     id="modal-task"
-    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
     role="dialog"
     aria-modal="true"
   >
-    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-lg w-full overflow-hidden flex flex-col shadow-2xl">
-      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
-        <h2 id="modal-task-title" class="text-xs font-mono font-bold uppercase text-brand-pale">Buat Tugas Baru</h2>
-        <button type="button" onclick="closeTaskModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+    <div class="bg-app-surface rounded-xl border border-app-border max-w-lg w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-6 py-4 border-b border-app-border flex items-center justify-between bg-app-surfaceElevated">
+        <h2 id="modal-task-title" class="text-sm font-bold text-white uppercase tracking-wider">Buat Tugas Baru</h2>
+        <button type="button" onclick="closeTaskModal()" class="text-app-muted hover:text-white text-xl leading-none">&times;</button>
       </div>
 
-      <form id="task-form" onsubmit="handleTaskFormSubmit(event)" class="p-5 space-y-3.5 text-xs">
+      <form id="task-form" onsubmit="handleTaskFormSubmit(event)" class="p-6 space-y-4 text-sm">
         <input type="hidden" id="task-edit-id" value="" />
         
         <div>
-          <label for="task-title-input" class="block font-mono text-brand-muted mb-1">Judul Tugas</label>
+          <label for="task-title-input" class="block font-semibold text-white mb-1.5">Judul Tugas</label>
           <input
             type="text"
             id="task-title-input"
             required
             placeholder="Contoh: Praktikum 04: Query Join MySQL"
-            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm"
           />
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3.5">
           <div>
-            <label for="task-class-select" class="block font-mono text-brand-muted mb-1">Kelas Tujuan</label>
-            <select id="task-class-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+            <label for="task-class-select" class="block font-semibold text-white mb-1.5">Kelas Tujuan</label>
+            <select id="task-class-select" required class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm">
               <!-- Populated dynamically -->
             </select>
           </div>
           <div>
-            <label for="task-subject-select" class="block font-mono text-brand-muted mb-1">Mata Pelajaran</label>
-            <select id="task-subject-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+            <label for="task-subject-select" class="block font-semibold text-white mb-1.5">Mata Pelajaran</label>
+            <select id="task-subject-select" required class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm">
               <option value="Pemrograman Web">Pemrograman Web</option>
               <option value="Basis Data">Basis Data</option>
               <option value="Pemrograman Web Lanjut">Pemrograman Web Lanjut</option>
@@ -505,38 +517,38 @@
         </div>
 
         <div>
-          <label for="task-due-input" class="block font-mono text-brand-muted mb-1">Batas Waktu (Tenggat)</label>
+          <label for="task-due-input" class="block font-semibold text-white mb-1.5">Batas Waktu Pengumpulan (Tenggat)</label>
           <input
             type="datetime-local"
             id="task-due-input"
             required
-            class="input-field w-full px-3 py-2 rounded-lg font-mono text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg font-mono text-sm"
           />
         </div>
 
         <div>
-          <label for="task-desc-input" class="block font-mono text-brand-muted mb-1">Instruksi Tugas</label>
+          <label for="task-desc-input" class="block font-semibold text-white mb-1.5">Petunjuk Pengerjaan Tugas</label>
           <textarea
             id="task-desc-input"
             rows="3"
             required
-            placeholder="Tuliskan petunjuk pengerjaan..."
-            class="input-field w-full p-2.5 rounded-lg text-xs leading-relaxed"
+            placeholder="Jelaskan petunjuk pengerjaan dan kriteria penilaian tugas..."
+            class="field-input w-full p-3 rounded-lg text-sm leading-relaxed"
           ></textarea>
         </div>
 
-        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-app-border flex items-center justify-end gap-2.5">
           <button
             type="button"
             onclick="closeTaskModal()"
-            class="px-3.5 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+            class="px-4 py-2 text-sm font-semibold text-app-muted hover:text-white rounded-lg transition"
           >
             Batal
           </button>
           <button
             type="submit"
             id="task-submit-btn"
-            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+            class="px-5 py-2 text-sm font-bold bg-app-violet hover:bg-app-violetHover text-app-bg rounded-lg transition shadow-sm"
           >
             Terbitkan ke Siswa
           </button>
@@ -548,58 +560,58 @@
   <!-- ================= MODAL 2: TAMBAH SISWA ================= -->
   <div
     id="modal-add-student"
-    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
     role="dialog"
     aria-modal="true"
   >
-    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-sm w-full overflow-hidden flex flex-col shadow-2xl">
-      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
-        <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Tambah Siswa Baru</h2>
-        <button type="button" onclick="closeAddStudentModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+    <div class="bg-app-surface rounded-xl border border-app-border max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-6 py-4 border-b border-app-border flex items-center justify-between bg-app-surfaceElevated">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Tambah Siswa Baru</h2>
+        <button type="button" onclick="closeAddStudentModal()" class="text-app-muted hover:text-white text-xl leading-none">&times;</button>
       </div>
 
-      <form id="add-student-form" onsubmit="handleAddStudentSubmit(event)" class="p-5 space-y-3.5 text-xs">
+      <form id="add-student-form" onsubmit="handleAddStudentSubmit(event)" class="p-6 space-y-4 text-sm">
         <div>
-          <label for="student-name-input" class="block font-mono text-brand-muted mb-1">Nama Lengkap Siswa</label>
+          <label for="student-name-input" class="block font-semibold text-white mb-1.5">Nama Lengkap Siswa</label>
           <input
             type="text"
             id="student-name-input"
             required
             placeholder="Contoh: Fajar Pratama"
-            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm"
           />
         </div>
 
         <div>
-          <label for="student-nisn-input" class="block font-mono text-brand-muted mb-1">NISN (10 Digit)</label>
+          <label for="student-nisn-input" class="block font-semibold text-white mb-1.5">Nomor Induk Siswa Nasional (NISN)</label>
           <input
             type="text"
             id="student-nisn-input"
             required
             pattern="[0-9]{10}"
-            placeholder="Contoh: 0081293830"
-            class="input-field w-full px-3 py-2 rounded-lg font-mono text-xs"
+            placeholder="10 Digit angka, contoh: 0081293830"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg font-mono text-sm"
           />
         </div>
 
         <div>
-          <label for="student-class-select" class="block font-mono text-brand-muted mb-1">Pilih Kelas</label>
-          <select id="student-class-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+          <label for="student-class-select" class="block font-semibold text-white mb-1.5">Pilih Kelas</label>
+          <select id="student-class-select" required class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm">
             <!-- Populated dynamically -->
           </select>
         </div>
 
-        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-app-border flex items-center justify-end gap-2.5">
           <button
             type="button"
             onclick="closeAddStudentModal()"
-            class="px-3 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+            class="px-4 py-2 text-sm font-semibold text-app-muted hover:text-white rounded-lg transition"
           >
             Batal
           </button>
           <button
             type="submit"
-            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+            class="px-5 py-2 text-sm font-bold bg-app-violet hover:bg-app-violetHover text-app-bg rounded-lg transition shadow-sm"
           >
             Simpan Siswa
           </button>
@@ -611,61 +623,61 @@
   <!-- ================= MODAL 3: TAMBAH KELAS ================= -->
   <div
     id="modal-add-class"
-    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
     role="dialog"
     aria-modal="true"
   >
-    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-sm w-full overflow-hidden flex flex-col shadow-2xl">
-      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
-        <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Tambah Rombel Kelas</h2>
-        <button type="button" onclick="closeAddClassModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+    <div class="bg-app-surface rounded-xl border border-app-border max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-6 py-4 border-b border-app-border flex items-center justify-between bg-app-surfaceElevated">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Tambah Rombel Kelas Baru</h2>
+        <button type="button" onclick="closeAddClassModal()" class="text-app-muted hover:text-white text-xl leading-none">&times;</button>
       </div>
 
-      <form id="add-class-form" onsubmit="handleAddClassSubmit(event)" class="p-5 space-y-3.5 text-xs">
+      <form id="add-class-form" onsubmit="handleAddClassSubmit(event)" class="p-6 space-y-4 text-sm">
         <div>
-          <label for="class-name-input" class="block font-mono text-brand-muted mb-1">Nama Rombel / Kelas</label>
+          <label for="class-name-input" class="block font-semibold text-white mb-1.5">Nama Kelas / Rombel</label>
           <input
             type="text"
             id="class-name-input"
             required
             placeholder="Contoh: XI RPL 2"
-            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm"
           />
         </div>
 
         <div>
-          <label for="class-subject-input" class="block font-mono text-brand-muted mb-1">Mata Pelajaran</label>
+          <label for="class-subject-input" class="block font-semibold text-white mb-1.5">Mata Pelajaran</label>
           <input
             type="text"
             id="class-subject-input"
             required
             placeholder="Contoh: Pemrograman Mobile"
-            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm"
           />
         </div>
 
         <div>
-          <label for="class-homeroom-input" class="block font-mono text-brand-muted mb-1">Wali Kelas</label>
+          <label for="class-homeroom-input" class="block font-semibold text-white mb-1.5">Nama Wali Kelas</label>
           <input
             type="text"
             id="class-homeroom-input"
             required
             placeholder="Contoh: Dra. Siti Aminah"
-            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+            class="field-input w-full px-3.5 py-2.5 rounded-lg text-sm"
           />
         </div>
 
-        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+        <div class="pt-3 border-t border-app-border flex items-center justify-end gap-2.5">
           <button
             type="button"
             onclick="closeAddClassModal()"
-            class="px-3 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+            class="px-4 py-2 text-sm font-semibold text-app-muted hover:text-white rounded-lg transition"
           >
             Batal
           </button>
           <button
             type="submit"
-            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+            class="px-5 py-2 text-sm font-bold bg-app-violet hover:bg-app-violetHover text-app-bg rounded-lg transition shadow-sm"
           >
             Simpan Kelas
           </button>
@@ -673,33 +685,34 @@
       </form>
     </div>
   </div>
-  <!-- ================= MODAL 4: PRATINJAU BERKAS (IN-BROWSER FILE PREVIEW) ================= -->
+
+  <!-- ================= MODAL 4: PRATINJAU BERKAS (IN-BROWSER PREVIEW) ================= -->
   <div
     id="modal-preview-file"
-    class="fixed inset-0 z-50 bg-brand-canvas/90 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6"
+    class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 sm:p-8"
     role="dialog"
     aria-modal="true"
   >
-    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-      <div class="px-5 py-3 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
-        <div class="flex items-center gap-2.5 truncate">
-          <span id="modal-preview-tag" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-surfaceElevated text-brand-pastel border border-brand-border">PDF</span>
-          <h2 id="modal-preview-title" class="text-xs font-mono font-bold text-brand-text truncate max-w-md">Nama_Berkas.pdf</h2>
+    <div class="bg-app-surface rounded-xl border border-app-border max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-6 py-4 border-b border-app-border flex items-center justify-between bg-app-surfaceElevated">
+        <div class="flex items-center gap-3 truncate">
+          <span id="modal-preview-tag" class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-app-surface text-app-pastel border border-app-border">PDF</span>
+          <h2 id="modal-preview-title" class="text-sm font-bold text-white truncate max-w-md">Nama_Berkas.pdf</h2>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <a
             id="modal-preview-download-link"
             href="#"
             download
-            class="text-xs font-mono text-brand-pastel hover:underline px-2.5 py-1 rounded bg-brand-surfaceElevated border border-brand-border"
+            class="text-xs font-bold text-app-pastel hover:text-white px-3 py-1.5 rounded-lg bg-app-surface border border-app-border transition"
           >
-            Unduh Asli &darr;
+            Unduh Berkas Asli &darr;
           </a>
-          <button type="button" onclick="closePreviewModal()" class="text-brand-subtle hover:text-brand-text text-lg leading-none p-1">&times;</button>
+          <button type="button" onclick="closePreviewModal()" class="text-app-muted hover:text-white text-2xl leading-none p-1">&times;</button>
         </div>
       </div>
 
-      <div id="modal-preview-body" class="p-4 overflow-auto flex-1 flex items-center justify-center bg-brand-canvas min-h-[350px] max-h-[75vh]">
+      <div id="modal-preview-body" class="p-4 overflow-auto flex-1 flex items-center justify-center bg-[#100d16] min-h-[400px] max-h-[75vh]">
         <!-- Dynamic content: Image, Iframe, or Code/Text -->
       </div>
     </div>
@@ -708,10 +721,10 @@
   <!-- Toast Notification -->
   <div
     id="toast"
-    class="fixed bottom-5 right-5 z-50 bg-brand-surface border border-brand-border text-brand-text px-4 py-2.5 rounded-lg text-xs font-mono hidden flex items-center gap-2 shadow-2xl"
+    class="fixed bottom-6 right-6 z-50 bg-app-surfaceElevated border border-app-border text-white px-4 py-3 rounded-xl text-sm font-medium hidden flex items-center gap-2.5 shadow-2xl"
     role="status"
   >
-    <span class="w-2 h-2 rounded-full bg-brand-success"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-app-success flex-shrink-0"></span>
     <span id="toast-message">Operasi berhasil.</span>
   </div>
 
@@ -727,7 +740,7 @@
       const toast = document.getElementById('toast');
       document.getElementById('toast-message').textContent = msg;
       toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 2600);
+      setTimeout(() => toast.classList.add('hidden'), 2800);
     }
 
     // ================= SINKRONISASI API REST =================
@@ -752,9 +765,9 @@
         renderSubmissions();
         renderGradebook();
         renderRoster();
-        showToast('Sinkronisasi data API berhasil.');
+        showToast('Data berhasil disinkronkan.');
       } catch (e) {
-        // Fallback default
+        // Fallback
       }
     }
 
@@ -767,12 +780,12 @@
         
         if (el) el.classList.add('hidden');
         if (tabBtn) {
-          tabBtn.classList.remove('text-brand-canvas', 'bg-brand-violet', 'font-bold', 'shadow-sm');
-          tabBtn.classList.add('text-brand-muted');
+          tabBtn.classList.remove('text-app-bg', 'bg-app-violet', 'font-bold', 'shadow-sm');
+          tabBtn.classList.add('text-app-muted');
         }
         if (mobBtn) {
-          mobBtn.classList.remove('text-brand-violet', 'font-bold');
-          mobBtn.classList.add('text-brand-muted');
+          mobBtn.classList.remove('text-app-violet', 'font-bold');
+          mobBtn.classList.add('text-app-muted');
         }
       });
 
@@ -782,12 +795,12 @@
 
       if (activeEl) activeEl.classList.remove('hidden');
       if (activeTabBtn) {
-        activeTabBtn.classList.remove('text-brand-muted');
-        activeTabBtn.classList.add('text-brand-canvas', 'bg-brand-violet', 'font-bold', 'shadow-sm');
+        activeTabBtn.classList.remove('text-app-muted');
+        activeTabBtn.classList.add('text-app-bg', 'bg-app-violet', 'font-bold', 'shadow-sm');
       }
       if (activeMobBtn) {
-        activeMobBtn.classList.remove('text-brand-muted');
-        activeMobBtn.classList.add('text-brand-violet', 'font-bold');
+        activeMobBtn.classList.remove('text-app-muted');
+        activeMobBtn.classList.add('text-app-violet', 'font-bold');
       }
 
       if (viewKey === 'coursework') renderCoursework();
@@ -830,69 +843,72 @@
         let tasksHtml = '';
         if (classTasks.length === 0) {
           tasksHtml = `
-            <div class="bg-brand-surface border border-dashed border-brand-border rounded-xl p-4 text-center text-xs text-brand-muted font-mono">
+            <div class="bg-app-surface border border-dashed border-app-border rounded-xl p-5 text-center text-sm text-app-muted">
               Belum ada tugas di kelas ${cls.name}. 
-              <button onclick="openCreateTaskModalForClass('${cls.name}', '${cls.subject.split('&')[0].trim()}')" class="text-brand-pastel hover:underline ml-1">Buat tugas sekarang</button>
+              <button onclick="openCreateTaskModalForClass('${cls.name}', '${cls.subject.split('&')[0].trim()}')" class="text-app-pastel font-semibold hover:underline ml-1">Buat tugas sekarang</button>
             </div>
           `;
         } else {
           tasksHtml = classTasks.map(task => {
             const percent = task.totalStudents > 0 ? Math.round((task.submittedCount / task.totalStudents) * 100) : 0;
             return `
-              <div class="bg-brand-surface border border-brand-border rounded-xl p-4 space-y-3 hover:border-brand-borderHover transition">
+              <div class="bg-app-surface border border-app-border rounded-xl p-5 space-y-4 hover:border-app-borderHover transition">
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                  <div class="space-y-1">
+                  <div class="space-y-1.5 flex-1">
                     <div class="flex items-center gap-2">
-                      <span class="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-brand-surfaceElevated text-brand-pastel border border-brand-border">
+                      <span class="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-app-surfaceElevated text-app-pastel border border-app-border">
                         ${task.subject}
                       </span>
-                      <span class="text-[10px] font-mono ${task.status === 'published' ? 'text-brand-success' : 'text-brand-warning'}">
+                      <span class="text-xs font-semibold ${task.status === 'published' ? 'text-app-success' : 'text-app-warning'}">
                         ${task.status === 'published' ? 'Diterbitkan' : 'Draf'}
                       </span>
                     </div>
-                    <h3 class="text-sm font-bold text-brand-text">
+                    <h3 class="text-base font-bold text-white">
                       ${task.title}
                     </h3>
-                    <p class="text-xs text-brand-muted leading-relaxed">
+                    <p class="text-sm text-app-muted leading-relaxed">
                       ${task.desc}
                     </p>
                   </div>
                   
-                  <div class="text-right sm:flex-shrink-0 font-mono text-xs text-brand-muted">
-                    <span class="text-brand-warning block font-semibold">Tenggat: ${task.dueFormatted}</span>
-                    <span class="text-[11px] text-brand-subtle">${task.submittedCount} dari ${task.totalStudents} Siswa Mengumpulkan</span>
+                  <div class="text-left sm:text-right sm:flex-shrink-0 text-sm text-app-muted space-y-1">
+                    <span class="text-app-warning block font-semibold text-xs font-mono">Batas Tenggat: ${task.dueFormatted}</span>
+                    <span class="text-xs text-white font-medium block">${task.submittedCount} dari ${task.totalStudents} siswa sudah mengumpulkan</span>
                   </div>
                 </div>
 
-                <div class="pt-3 border-t border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div class="flex-1 max-w-xs space-y-1">
-                    <div class="w-full bg-brand-surfaceElevated h-1 rounded-full overflow-hidden border border-brand-border">
-                      <div class="bg-brand-violet h-full rounded-full" style="width: ${percent}%"></div>
+                <div class="pt-3 border-t border-app-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
+                  <div class="flex-1 max-w-sm space-y-1.5">
+                    <div class="w-full bg-app-surfaceElevated h-2 rounded-full overflow-hidden border border-app-border">
+                      <div class="bg-app-violet h-full rounded-full transition-all duration-300" style="width: ${percent}%"></div>
                     </div>
-                    <div class="text-[10px] font-mono text-brand-muted">Progress: ${percent}% (${task.submittedCount} siswa)</div>
+                    <div class="text-xs text-app-muted font-medium flex justify-between">
+                      <span>Progres Pengumpulan: ${percent}%</span>
+                      <span>${task.submittedCount} Siswa</span>
+                    </div>
                   </div>
 
                   <div class="flex items-center gap-2">
                     <button
                       type="button"
                       onclick="openEditTaskModal(${task.id})"
-                      class="px-2.5 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel text-xs font-mono transition"
+                      class="px-3 py-1.5 rounded-lg bg-app-surfaceElevated hover:bg-app-surfaceHover text-white text-xs font-semibold border border-app-border transition"
                     >
-                      Edit
+                      Ubah
                     </button>
                     <button
                       type="button"
                       onclick="deleteTask(${task.id})"
-                      class="px-2.5 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-danger/20 text-brand-subtle hover:text-brand-danger text-xs font-mono transition"
+                      class="px-3 py-1.5 rounded-lg bg-app-surfaceElevated hover:bg-app-danger/20 text-app-muted hover:text-app-danger text-xs font-semibold border border-app-border transition"
                     >
                       Hapus
                     </button>
                     <button
                       type="button"
                       onclick="switchView('grading')"
-                      class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas font-bold transition text-xs shadow-sm"
+                      class="px-4 py-2 rounded-lg bg-app-violet hover:bg-app-violetHover text-app-bg font-bold transition text-xs shadow-sm"
                     >
-                      Tinjau Kiriman (${task.submittedCount})
+                      Periksa Kiriman (${task.submittedCount})
                     </button>
                   </div>
                 </div>
@@ -902,17 +918,17 @@
         }
 
         block.innerHTML = `
-          <div class="flex items-center justify-between pt-1">
+          <div class="flex items-center justify-between pt-2">
             <div class="flex items-center gap-2">
-              <h2 class="text-sm font-bold text-brand-text">${cls.name}</h2>
-              <span class="text-xs text-brand-muted font-mono">&bull; ${cls.subject} (${cls.count} Siswa)</span>
+              <h2 class="text-base font-bold text-white">${cls.name}</h2>
+              <span class="text-xs text-app-muted font-medium">&bull; ${cls.subject} (${cls.count} Siswa)</span>
             </div>
             <button
               type="button"
               onclick="openCreateTaskModalForClass('${cls.name}', '${cls.subject.split('&')[0].trim()}')"
-              class="text-xs font-mono text-brand-pastel hover:underline"
+              class="text-xs font-semibold text-app-pastel hover:underline"
             >
-              + Buat di ${cls.name}
+              + Buat Tugas di ${cls.name}
             </button>
           </div>
           ${tasksHtml}
@@ -950,7 +966,7 @@
       const task = taskList.find(t => t.id === id);
       if (!task) return;
 
-      document.getElementById('modal-task-title').textContent = 'Edit Tugas';
+      document.getElementById('modal-task-title').textContent = 'Ubah Tugas';
       document.getElementById('task-submit-btn').textContent = 'Simpan Perubahan';
       document.getElementById('task-edit-id').value = String(task.id);
       
@@ -1002,7 +1018,6 @@
           showToast(`Tugas "${title}" berhasil diperbarui.`);
         }
       } else {
-        // Send POST to /api/tasks
         try {
           const res = await fetch('/api/tasks', {
             method: 'POST',
@@ -1024,7 +1039,7 @@
           };
           taskList.unshift(newTask);
         }
-        showToast(`Tugas "${title}" diterbitkan ke kelas ${cls}.`);
+        showToast(`Tugas "${title}" berhasil diterbitkan ke kelas ${cls}.`);
       }
 
       closeTaskModal();
@@ -1051,7 +1066,7 @@
       renderCoursework(document.getElementById('class-filter-select').value, q);
     }
 
-    // ================= GRADING CONSOLE =================
+    // ================= PERIKSA TUGAS (GRADING) =================
     function renderSubmissions() {
       const container = document.getElementById('submissions-list-container');
       container.innerHTML = '';
@@ -1059,7 +1074,7 @@
       document.getElementById('badge-pending-count').textContent = submissionList.length;
 
       if (submissionList.length === 0) {
-        container.innerHTML = '<div class="p-6 text-center text-brand-muted font-mono text-xs">Semua kiriman sudah dinilai.</div>';
+        container.innerHTML = '<div class="p-8 text-center text-app-muted text-sm">Semua kiriman tugas sudah diperiksa dan dinilai.</div>';
         return;
       }
 
@@ -1072,38 +1087,38 @@
           const dueTime = new Date(task.due).getTime();
           const subTime = sub.id > 1000000000 ? sub.id : Date.now();
           if (subTime > dueTime) {
-            timingBadge = '<span class="text-[9px] font-mono font-bold text-brand-danger bg-brand-danger/10 px-1.5 py-0.2 rounded border border-brand-danger/20">Terlambat</span>';
+            timingBadge = '<span class="text-xs font-semibold text-app-danger bg-app-danger/10 px-2 py-0.5 rounded border border-app-danger/20">Terlambat</span>';
           } else {
-            timingBadge = '<span class="text-[9px] font-mono font-bold text-brand-success bg-brand-success/10 px-1.5 py-0.2 rounded border border-brand-success/20">Tepat Waktu</span>';
+            timingBadge = '<span class="text-xs font-semibold text-app-success bg-app-success/10 px-2 py-0.5 rounded border border-app-success/20">Tepat Waktu</span>';
           }
         }
 
         const row = document.createElement('div');
-        row.className = `p-4 hover:bg-brand-surfaceHover transition cursor-pointer flex items-start justify-between gap-3 ${isActive ? 'bg-brand-surfaceElevated/70 border-l-2 border-brand-violet' : ''}`;
+        row.className = `p-4 hover:bg-app-surfaceHover transition cursor-pointer flex items-start justify-between gap-3 ${isActive ? 'bg-app-surfaceElevated border-l-4 border-app-violet' : ''}`;
         row.onclick = () => selectSubmissionById(sub.id);
         row.innerHTML = `
           <div class="space-y-1">
             <div class="flex items-center gap-2">
-              <span class="font-bold text-brand-text">${sub.student}</span>
-              <span class="font-mono text-[11px] text-brand-subtle">${sub.nisn}</span>
+              <span class="font-bold text-white text-sm">${sub.student}</span>
+              <span class="text-xs font-mono text-app-subtle">(${sub.nisn})</span>
             </div>
-            <div class="text-[11px] text-brand-muted">
-              ${sub.taskTitle} &bull; Kelas ${sub.class}
+            <div class="text-xs text-app-muted">
+              ${sub.taskTitle} &bull; ${sub.class}
             </div>
-            <div class="flex items-center gap-2 pt-1 font-mono text-[11px] text-brand-pastel">
+            <div class="flex items-center gap-1.5 pt-1 text-xs text-app-pastel font-medium">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
               <span>${sub.fileName}</span>
             </div>
           </div>
 
-          <div class="text-right space-y-1.5 font-mono">
-            <div class="flex items-center justify-end gap-1">
+          <div class="text-right space-y-1.5">
+            <div class="flex items-center justify-end gap-1.5">
               ${timingBadge}
-              <span class="px-2 py-0.5 rounded text-[10px] bg-brand-warning/20 text-brand-warning">
-                ${sub.score !== null ? `Nilai: ${sub.score}` : 'Perlu Nilai'}
+              <span class="px-2 py-0.5 rounded text-xs font-bold ${sub.score !== null ? 'bg-app-success/15 text-app-success' : 'bg-app-warning/15 text-app-warning'}">
+                ${sub.score !== null ? `Nilai: ${sub.score}` : 'Belum Dinilai'}
               </span>
             </div>
-            <span class="text-[10px] text-brand-subtle block">${sub.timeFormatted}</span>
+            <span class="text-xs text-app-subtle block font-mono">${sub.timeFormatted}</span>
           </div>
         `;
         container.appendChild(row);
@@ -1111,17 +1126,16 @@
 
       const activeSub = submissionList.find(s => s.id === activeSubmissionId) || submissionList[0];
       if (activeSub) {
-        document.getElementById('console-student-name').textContent = `${activeSub.student} (${activeSub.nisn})`;
-        document.getElementById('console-class-badge').textContent = activeSub.class;
+        document.getElementById('console-student-name').textContent = activeSub.student;
+        document.getElementById('console-class-badge').textContent = `${activeSub.class} • NISN: ${activeSub.nisn}`;
         document.getElementById('console-task-title').textContent = activeSub.taskTitle;
         document.getElementById('console-file-name').textContent = activeSub.fileName;
-        document.getElementById('console-answer-text').textContent = `"${activeSub.answerText}"`;
+        document.getElementById('console-answer-text').textContent = `"${activeSub.answerText || 'Tidak ada catatan jawaban tambahan.'}"`;
         document.getElementById('console-score-input').value = activeSub.score !== null ? activeSub.score : '';
         document.getElementById('console-feedback-input').value = activeSub.feedback || '';
 
-        // Dynamic file category tag & download URL
         const fn = (activeSub.fileName || '').toLowerCase();
-        let tag = 'FILE';
+        let tag = 'BERKAS';
         if (fn.endsWith('.jpg') || fn.endsWith('.jpeg') || fn.endsWith('.png') || fn.endsWith('.webp')) tag = 'GAMBAR';
         else if (fn.endsWith('.pdf')) tag = 'PDF';
         else if (fn.endsWith('.zip') || fn.endsWith('.rar') || fn.endsWith('.7z')) tag = 'ARSIP';
@@ -1159,34 +1173,34 @@
       if (tag === 'GAMBAR') {
         body.innerHTML = `
           <div class="flex flex-col items-center justify-center p-2">
-            <img src="${url}" alt="${activeSub.fileName}" class="max-w-full max-h-[70vh] object-contain rounded-lg border border-brand-border shadow-md" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'p-8 text-center text-brand-muted font-mono\\'>Gambar simulasi tersimpan di server: ${activeSub.fileName}</div>'" />
+            <img src="${url}" alt="${activeSub.fileName}" class="max-w-full max-h-[70vh] object-contain rounded-lg border border-app-border shadow-lg" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'p-8 text-center text-app-muted\\'>Gambar berkas tersimpan di folder uploads: ${activeSub.fileName}</div>'" />
           </div>
         `;
       } else if (tag === 'PDF') {
         body.innerHTML = `
-          <iframe src="${url}" class="w-full h-[70vh] rounded-lg border border-brand-border bg-brand-surface" title="Pratinjau PDF"></iframe>
+          <iframe src="${url}" class="w-full h-[70vh] rounded-lg border border-app-border bg-app-surface" title="Pratinjau PDF"></iframe>
         `;
       } else if (tag === 'KODE') {
-        body.innerHTML = `<div class="p-8 text-center text-brand-muted font-mono">Memuat teks berkas...</div>`;
+        body.innerHTML = `<div class="p-8 text-center text-app-muted font-mono">Memuat teks berkas...</div>`;
         fetch(url)
           .then(r => r.text())
           .then(text => {
             body.innerHTML = `
-              <pre class="w-full h-[70vh] overflow-auto p-4 text-xs font-mono bg-[#09070c] text-brand-text rounded-lg border border-brand-border whitespace-pre-wrap leading-relaxed select-text">${escapeHtml(text)}</pre>
+              <pre class="w-full h-[70vh] overflow-auto p-4 text-xs font-mono bg-[#0c0912] text-white rounded-lg border border-app-border whitespace-pre-wrap leading-relaxed select-text">${escapeHtml(text)}</pre>
             `;
           })
           .catch(() => {
-            body.innerHTML = `<pre class="w-full p-4 text-xs font-mono bg-[#09070c] text-brand-text rounded-lg border border-brand-border select-text">${escapeHtml(activeSub.answerText || 'Isi berkas kodingan siswa.')}</pre>`;
+            body.innerHTML = `<pre class="w-full p-4 text-xs font-mono bg-[#0c0912] text-white rounded-lg border border-app-border select-text">${escapeHtml(activeSub.answerText || 'Isi berkas kodingan siswa.')}</pre>`;
           });
       } else {
         body.innerHTML = `
-          <div class="p-8 text-center space-y-3 font-mono">
-            <div class="w-12 h-12 rounded-xl bg-brand-surfaceElevated border border-brand-border mx-auto flex items-center justify-center text-brand-pastel">
-              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <div class="p-8 text-center space-y-3 font-sans">
+            <div class="w-14 h-14 rounded-xl bg-app-surfaceElevated border border-app-border mx-auto flex items-center justify-center text-app-pastel">
+              <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <p class="text-xs text-brand-text font-bold">${activeSub.fileName}</p>
-            <p class="text-[11px] text-brand-muted">Format arsip biner dapat langsung diunduh ke komputer.</p>
-            <a href="${url}" download class="inline-block px-3 py-1.5 rounded-lg bg-brand-violet text-brand-canvas font-bold text-xs">Unduh Berkas ke Laptop</a>
+            <p class="text-sm text-white font-bold">${activeSub.fileName}</p>
+            <p class="text-xs text-app-muted">Format berkas arsip dapat langsung diunduh ke komputer Anda.</p>
+            <a href="${url}" download class="inline-block px-4 py-2 rounded-lg bg-app-violet text-app-bg font-bold text-xs mt-2">Unduh Berkas Sekarang</a>
           </div>
         `;
       }
@@ -1234,12 +1248,12 @@
         const st = studentList.find(s => s.nisn === sub.nisn);
         if (st) st.scoreTugas1 = score;
 
-        showToast(`Nilai ${score}/100 untuk ${sub.student.split(' ')[0]} disimpan.`);
+        showToast(`Nilai ${score}/100 untuk ${sub.student} berhasil disimpan.`);
         renderSubmissions();
       }
     }
 
-    // ================= BUKU NILAI =================
+    // ================= DAFTAR NILAI =================
     function renderGradebook() {
       const tbody = document.getElementById('gradebook-tbody');
       tbody.innerHTML = '';
@@ -1249,27 +1263,27 @@
         const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '-';
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-brand-surfaceElevated/50 transition';
+        tr.className = 'hover:bg-app-surfaceElevated transition';
         tr.innerHTML = `
-          <td class="py-3 px-4 font-bold text-brand-text">
+          <td class="py-3.5 px-4 font-bold text-white">
             ${st.name}
-            <span class="block text-[10px] font-mono text-brand-subtle">${st.nisn}</span>
+            <span class="block text-xs font-mono text-app-muted">${st.nisn}</span>
           </td>
-          <td class="py-3 px-4 font-mono text-brand-muted">${st.class}</td>
-          <td class="py-3 px-4 font-mono ${st.scoreTugas1 ? 'text-brand-success font-bold' : 'text-brand-warning'}">
-            ${st.scoreTugas1 !== null && st.scoreTugas1 !== undefined ? st.scoreTugas1 : 'Menunggu'}
+          <td class="py-3.5 px-4 text-app-body">${st.class}</td>
+          <td class="py-3.5 px-4 font-mono ${st.scoreTugas1 ? 'text-app-success font-bold' : 'text-app-warning font-semibold'}">
+            ${st.scoreTugas1 !== null && st.scoreTugas1 !== undefined ? `${st.scoreTugas1}` : 'Belum Nilai'}
           </td>
-          <td class="py-3 px-4 font-mono ${st.scoreTugas2 ? 'text-brand-success font-bold' : 'text-brand-muted'}">
-            ${st.scoreTugas2 !== null && st.scoreTugas2 !== undefined ? st.scoreTugas2 : '-'}
+          <td class="py-3.5 px-4 font-mono ${st.scoreTugas2 ? 'text-app-success font-bold' : 'text-app-subtle'}">
+            ${st.scoreTugas2 !== null && st.scoreTugas2 !== undefined ? `${st.scoreTugas2}` : '-'}
           </td>
-          <td class="py-3 px-4 font-mono font-bold text-brand-text">${avg}</td>
-          <td class="py-3 px-4 text-right">
+          <td class="py-3.5 px-4 font-mono font-bold text-white">${avg}</td>
+          <td class="py-3.5 px-4 text-right">
             <button
               type="button"
               onclick="promptEditScore('${st.nisn}')"
-              class="px-2 py-0.5 rounded text-[11px] font-mono bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border"
+              class="px-3 py-1 rounded-md text-xs font-semibold bg-app-surfaceElevated hover:bg-app-surfaceHover text-app-pastel border border-app-border transition"
             >
-              Ubah
+              Ubah Nilai
             </button>
           </td>
         `;
@@ -1281,12 +1295,12 @@
       const st = studentList.find(s => s.nisn === nisn);
       if (!st) return;
       const current = st.scoreTugas1 !== null && st.scoreTugas1 !== undefined ? st.scoreTugas1 : 85;
-      const val = prompt(`Masukkan nilai Tugas 01 untuk ${st.name} (0 - 100):`, String(current));
+      const val = prompt(`Masukkan nilai Tugas untuk ${st.name} (0 sampai 100):`, String(current));
       if (val !== null && val.trim() !== '') {
         const num = parseInt(val, 10);
         if (!isNaN(num) && num >= 0 && num <= 100) {
           st.scoreTugas1 = num;
-          showToast(`Nilai ${st.name} diperbarui: ${num}`);
+          showToast(`Nilai ${st.name} berhasil diperbarui: ${num}`);
           renderGradebook();
         } else {
           alert('Nilai harus berupa angka antara 0 sampai 100.');
@@ -1294,7 +1308,7 @@
       }
     }
 
-    // ================= CRUD KELAS & SISWA =================
+    // ================= DATA SISWA & KELAS =================
     function renderRoster() {
       const classContainer = document.getElementById('classes-grid');
       classContainer.innerHTML = '';
@@ -1303,16 +1317,16 @@
         cls.count = studentCount > 0 ? studentCount : cls.count;
 
         const card = document.createElement('div');
-        card.className = 'bg-brand-surface border border-brand-border rounded-xl p-4 space-y-2';
+        card.className = 'bg-app-surface border border-app-border rounded-xl p-5 space-y-2.5';
         card.innerHTML = `
           <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-brand-text">${cls.name}</h3>
-            <span class="font-mono text-xs text-brand-pastel">${cls.count} Siswa</span>
+            <h3 class="text-base font-bold text-white">${cls.name}</h3>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-app-surfaceElevated text-app-pastel border border-app-border">${cls.count} Siswa</span>
           </div>
-          <p class="text-xs text-brand-muted">${cls.subject}</p>
-          <div class="pt-2 border-t border-brand-border text-[11px] text-brand-subtle font-mono flex items-center justify-between">
-            <span>Wali: ${cls.homeroom}</span>
-            <button onclick="deleteClass(${cls.id})" class="text-brand-subtle hover:text-brand-danger text-[10px]">Hapus</button>
+          <p class="text-xs text-app-muted">${cls.subject}</p>
+          <div class="pt-3 border-t border-app-border text-xs text-app-subtle flex items-center justify-between">
+            <span>Wali Kelas: ${cls.homeroom}</span>
+            <button onclick="deleteClass(${cls.id})" class="text-app-muted hover:text-app-danger text-xs font-semibold">Hapus</button>
           </div>
         `;
         classContainer.appendChild(card);
@@ -1324,16 +1338,16 @@
 
       studentList.forEach(st => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-brand-surfaceElevated/50 transition';
+        tr.className = 'hover:bg-app-surfaceElevated transition';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-bold text-brand-text">${st.name}</td>
-          <td class="py-2.5 px-4 font-mono text-brand-muted">${st.nisn}</td>
-          <td class="py-2.5 px-4 font-mono text-brand-pastel">${st.class}</td>
-          <td class="py-2.5 px-4 text-right">
+          <td class="py-3 px-4 font-bold text-white">${st.name}</td>
+          <td class="py-3 px-4 font-mono text-app-muted text-xs">${st.nisn}</td>
+          <td class="py-3 px-4 font-semibold text-app-pastel">${st.class}</td>
+          <td class="py-3 px-4 text-right">
             <button
               type="button"
               onclick="deleteStudent(${st.id})"
-              class="px-2 py-0.5 rounded text-[11px] font-mono text-brand-subtle hover:text-brand-danger hover:bg-brand-danger/10 transition"
+              class="px-2.5 py-1 rounded text-xs font-semibold text-app-muted hover:text-app-danger hover:bg-app-danger/10 transition"
             >
               Hapus
             </button>
@@ -1369,7 +1383,7 @@
       const cls = document.getElementById('student-class-select').value;
 
       if (studentList.some(s => s.nisn === nisn)) {
-        alert('NISN ini sudah terdaftar!');
+        alert('NISN ini sudah terdaftar sebelumnya!');
         return;
       }
 
@@ -1388,7 +1402,7 @@
     function deleteStudent(id) {
       const st = studentList.find(s => s.id === id);
       if (!st) return;
-      if (confirm(`Hapus siswa "${st.name}"?`)) {
+      if (confirm(`Hapus siswa "${st.name}" dari sistem?`)) {
         studentList = studentList.filter(s => s.id !== id);
         showToast('Siswa berhasil dihapus.');
         renderRoster();
@@ -1450,11 +1464,6 @@
         closeAddClassModal();
         closePreviewModal();
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.getElementById('quick-search');
-        if (searchInput) searchInput.focus();
-      }
     });
 
     let previousSubCount = 0;
@@ -1467,7 +1476,7 @@
         taskList = rTasks;
         if (previousSubCount > 0 && rSubs.length > previousSubCount) {
           const diff = rSubs.length - previousSubCount;
-          showToast(`Ada ${diff} kiriman baru masuk dari siswa!`);
+          showToast(`Ada ${diff} kiriman tugas baru masuk dari siswa!`);
         }
         previousSubCount = rSubs.length;
         submissionList = rSubs;
@@ -1475,10 +1484,11 @@
       } catch (_) {}
     }
 
-    // Start with API sync & silent auto-poll every 4 seconds
+    // Initialize with live API sync and periodic background poll
     syncFromApi().then(() => {
       previousSubCount = submissionList.length;
       setInterval(syncFromApiSilently, 4000);
     });
+  </script>
 </body>
 </html>

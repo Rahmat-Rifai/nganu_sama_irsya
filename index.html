@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pngumpul</title>
+  <title>Pngumpul &mdash; Portal Masuk</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -17,16 +17,16 @@
             mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
-            brand: {
-              canvas: '#0c0a10',
-              surface: '#14101b',
-              border: '#261f33',
-              text: '#f6f3f9',
-              muted: '#9f95ad',
-              subtle: '#6b6378',
+            app: {
+              bg: '#0f0d14',
+              surface: '#171320',
+              surfaceElevated: '#201a2d',
+              border: '#2e263f',
+              text: '#ffffff',
+              muted: '#b2a8c0',
               violet: '#B284BE',      // African Violet
-              violetHover: '#a16fab',
-              pastel: '#BBA3D9',      // Light Pastel Purple
+              violetHover: '#c599d1',
+              pastel: '#D4BBF0',      // Light Pastel Purple
             }
           }
         }
@@ -41,45 +41,49 @@
   </script>
   <style>
     body {
-      background-color: #0c0a10;
-      color: #f6f3f9;
-      background-image: radial-gradient(ellipse 80% 50% at 50% -20%, #20172e 0%, #0c0a10 70%);
+      background-color: #0f0d14;
+      color: #ece6f2;
+      background-image: radial-gradient(ellipse 80% 50% at 50% -20%, #251b38 0%, #0f0d14 70%);
       background-attachment: fixed;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 antialiased selection:bg-brand-violet selection:text-brand-canvas">
-  <main class="w-full max-w-xs bg-brand-surface border border-brand-border rounded-xl p-6 text-center space-y-5 shadow-2xl">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 antialiased selection:bg-app-violet selection:text-app-bg">
+  <main class="w-full max-w-sm bg-app-surface border border-app-border rounded-xl p-7 text-center space-y-6 shadow-2xl">
     
-    <div class="flex items-center justify-center gap-2.5">
-      <svg class="w-7 h-7 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="32" height="32" rx="8" fill="#171220"/>
-        <circle cx="16" cy="16" r="10.5" stroke="#362d46" stroke-width="1"/>
+    <div class="flex items-center justify-center gap-3">
+      <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#1f182b"/>
+        <circle cx="16" cy="16" r="10.5" stroke="#3d3254" stroke-width="1.2"/>
         <path d="M16 5.5C16 11.299 11.299 16 5.5 16C11.299 16 16 20.701 16 26.5C16 20.701 20.701 16 26.5 16C20.701 16 16 11.299 16 5.5Z" fill="#B284BE"/>
-        <circle cx="16" cy="16" r="2.75" fill="#EDDAF2"/>
+        <circle cx="16" cy="16" r="3" fill="#F2E8FA"/>
       </svg>
-      <span class="text-base font-extrabold tracking-tight text-brand-text">
-        Pngumpul
-      </span>
-      <span class="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-brand-canvas text-brand-pastel border border-brand-border">
-        Guru
-      </span>
+      <div class="text-left">
+        <span class="text-lg font-extrabold tracking-tight text-white block leading-tight">
+          Pngumpul
+        </span>
+        <span class="text-xs text-app-muted">Panel Pengelolaan Tugas Guru</span>
+      </div>
     </div>
 
-    <div class="space-y-2 pt-1 text-xs">
+    <div class="space-y-2.5 pt-1 text-sm font-semibold">
       <a
         href="admin.html"
-        class="w-full block py-2.5 px-3 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas font-bold transition shadow-sm"
+        class="w-full block py-3 px-4 rounded-lg bg-app-violet hover:bg-app-violetHover text-app-bg font-bold transition shadow-sm text-center"
       >
         Buka Panel Guru
       </a>
       <a
         href="login.html"
-        class="w-full block py-2 px-3 rounded-lg bg-brand-canvas hover:bg-brand-surface text-brand-text font-mono text-[11px] border border-brand-border transition"
+        class="w-full block py-2.5 px-4 rounded-lg bg-app-surfaceElevated hover:bg-app-border text-white text-xs border border-app-border transition text-center"
       >
-        Halaman Masuk
+        Halaman Masuk Akun
       </a>
     </div>
+
+    <p class="text-xs text-app-muted/70 pt-2 border-t border-app-border">
+      SMK Negeri 1 &bull; Jurusan Rekayasa Perangkat Lunak
+    </p>
 
   </main>
 </body>
