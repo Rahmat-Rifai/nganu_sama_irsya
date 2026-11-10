@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pngumpul &mdash; Panel Guru</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            brand: {
+              canvas: '#0c0a10',
+              surface: '#14101b',
+              surfaceElevated: '#1b1625',
+              surfaceHover: '#221b2f',
+              border: '#261f33',
+              borderHover: '#3d3251',
+              text: '#f6f3f9',
+              muted: '#9f95ad',
+              subtle: '#6b6378',
+              violet: '#B284BE',      // African Violet
+              violetHover: '#a16fab',
+              pastel: '#BBA3D9',      // Light Pastel Purple
+              pale: '#EDDAF2',        // Pale Purple
+              danger: '#ff8a80',
+              warning: '#f4c66a',
+              success: '#81c995',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0c0a10;
+      color: #f6f3f9;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-image: radial-gradient(ellipse 80% 40% at 50% -15%, #20172e 0%, #0c0a10 70%);
+      background-attachment: fixed;
+    }
+    button, a, select, input, textarea {
+      cursor: pointer;
+    }
+    input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 1px #0c0a10, 0 0 0 3px #B284BE;
+    }
+    .input-field {
+      background-color: #0e0b14;
+      border: 1px solid #261f33;
+      color: #f6f3f9;
+      transition: border-color 0.12s ease;
+    }
+    .input-field:focus {
+      border-color: #B284BE;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0c0a10;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #261f33;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-brand-canvas text-brand-text antialiased selection:bg-brand-violet selection:text-brand-canvas">
+
+  <!-- ================= TOP COMMAND BAR ================= -->
+  <header class="bg-brand-surface/90 backdrop-blur-md border-b border-brand-border sticky top-0 z-30 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-13 gap-4">
+      
+      <!-- Brand with Flaticon Design-Element Star Mark -->
+      <div class="flex items-center gap-3 min-w-[180px]">
+        <a href="admin.html" class="flex items-center gap-2.5" aria-label="Pngumpul">
+          <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#171220"/>
+            <circle cx="16" cy="16" r="10.5" stroke="#362d46" stroke-width="1"/>
+            <path d="M16 5.5C16 11.299 11.299 16 5.5 16C11.299 16 16 20.701 16 26.5C16 20.701 20.701 16 26.5 16C20.701 16 16 11.299 16 5.5Z" fill="#B284BE"/>
+            <circle cx="16" cy="16" r="2.75" fill="#EDDAF2"/>
+          </svg>
+          <span class="text-sm font-extrabold tracking-tight text-brand-text">
+            Pngumpul
+          </span>
+          <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-brand-surfaceElevated text-brand-subtle border border-brand-border ml-1">
+            Guru
+          </span>
+        </a>
+      </div>
+
+      <!-- Center Views Switcher -->
+      <nav class="hidden sm:flex items-center gap-1 font-mono text-xs" aria-label="Navigasi">
+        <button
+          type="button"
+          id="tab-btn-coursework"
+          onclick="switchView('coursework')"
+          class="px-3 py-1.5 rounded-lg transition font-bold text-brand-canvas bg-brand-violet shadow-sm"
+        >
+          Tugas Kelas
+        </button>
+        <button
+          type="button"
+          id="tab-btn-grading"
+          onclick="switchView('grading')"
+          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated flex items-center gap-1.5"
+        >
+          <span>Periksa Kiriman</span>
+          <span id="badge-pending-count" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-violet/20 text-brand-pale">2</span>
+        </button>
+        <button
+          type="button"
+          id="tab-btn-gradebook"
+          onclick="switchView('gradebook')"
+          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated"
+        >
+          Buku Nilai
+        </button>
+        <button
+          type="button"
+          id="tab-btn-roster"
+          onclick="switchView('roster')"
+          class="px-3 py-1.5 rounded-lg transition text-brand-muted hover:text-brand-text hover:bg-brand-surfaceElevated"
+        >
+          Siswa & Rombel
+        </button>
+      </nav>
+
+      <!-- Right: Action & Profile -->
+      <div class="flex items-center gap-2.5">
+        <button
+          type="button"
+          onclick="openCreateTaskModal()"
+          class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span class="hidden md:inline">Tugas Baru</span>
+        </button>
+
+        <!-- Teacher Avatar & Logout -->
+        <div class="flex items-center gap-2 pl-2 border-l border-brand-border text-xs">
+          <span class="hidden xl:inline text-brand-muted font-mono text-[11px]" id="user-display-name">Drs. Budi Santoso</span>
+          <button
+            type="button"
+            onclick="handleLogout()"
+            class="p-1.5 text-brand-subtle hover:text-brand-danger hover:bg-brand-surfaceElevated rounded-lg transition"
+            title="Keluar"
+            aria-label="Keluar"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mobile Sub-Navigation -->
+    <div class="sm:hidden flex items-center justify-around py-2 border-t border-brand-border text-xs font-mono">
+      <button onclick="switchView('coursework')" id="mob-btn-coursework" class="text-brand-violet font-bold">Tugas</button>
+      <button onclick="switchView('grading')" id="mob-btn-grading" class="text-brand-muted">Kiriman</button>
+      <button onclick="switchView('gradebook')" id="mob-btn-gradebook" class="text-brand-muted">Nilai</button>
+      <button onclick="switchView('roster')" id="mob-btn-roster" class="text-brand-muted">Rombel</button>
+    </div>
+  </header>
+
+  <!-- ================= WORKSPACE BODY ================= -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- ================= VIEW 1: TUGAS KELAS ================= -->
+    <section id="view-coursework" class="space-y-6">
+      
+      <!-- Sub-Bar: Class Filter & Actions -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-brand-border">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-brand-muted">Kelas:</span>
+          <select
+            id="class-filter-select"
+            onchange="filterCoursework()"
+            class="input-field px-2.5 py-1 text-xs rounded-lg font-medium"
+          >
+            <option value="all">Semua Kelas</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="relative w-48 hidden sm:block">
+            <input
+              type="text"
+              id="coursework-search"
+              oninput="searchCoursework(event)"
+              placeholder="Cari judul..."
+              class="input-field w-full text-xs rounded-lg pl-7 pr-3 py-1 placeholder:text-brand-subtle"
+            />
+            <svg class="w-3.5 h-3.5 text-brand-subtle absolute left-2 top-1.5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <button
+            type="button"
+            onclick="syncFromApi()"
+            class="px-2.5 py-1 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border text-xs font-mono transition"
+            title="Sinkronkan dengan Server API"
+          >
+            Sinkron API
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Coursework Stream Container -->
+      <div id="coursework-stream-container" class="space-y-6">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 2: PERIKSA & NILAI ================= -->
+    <section id="view-grading" class="hidden space-y-4">
+      
+      <div class="pb-2 border-b border-brand-border flex items-center justify-between">
+        <div>
+          <h1 class="text-base font-bold text-brand-text">Antrean Periksa Kiriman</h1>
+          <p class="text-xs text-brand-muted">Review dan beri skor pada berkas jawaban siswa.</p>
+        </div>
+        <button onclick="syncFromApi()" class="text-xs font-mono text-brand-pastel hover:underline">
+          Segarkan Data &orarr;
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Left Submissions List (6 cols) -->
+        <div class="lg:col-span-6 bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+          <div class="px-4 py-3 bg-brand-canvas border-b border-brand-border flex items-center justify-between text-xs font-mono">
+            <span>Daftar Kiriman Masuk</span>
+            <span class="text-brand-pastel font-bold" id="queue-pending-badge">0 Menunggu Nilai</span>
+          </div>
+
+          <div id="submissions-list-container" class="divide-y divide-brand-border text-xs">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Right Side: The Grading Dossier Panel (6 cols) -->
+        <div class="lg:col-span-6 bg-brand-surface border border-brand-border rounded-xl p-5 space-y-4">
+          <div class="pb-3 border-b border-brand-border flex items-center justify-between">
+            <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Lembar Penilaian</h2>
+            <span id="console-class-badge" class="font-mono text-[11px] text-brand-pastel">-</span>
+          </div>
+
+          <div class="space-y-0.5">
+            <h3 id="console-student-name" class="text-sm font-bold text-brand-text">-</h3>
+            <p id="console-task-title" class="text-xs text-brand-muted font-mono">-</p>
+          </div>
+
+          <!-- Answer & File Preview -->
+          <div class="bg-brand-canvas p-3 rounded-lg border border-brand-border space-y-2 text-xs">
+            <span class="text-[10px] font-mono uppercase text-brand-subtle block">Jawaban Siswa:</span>
+            <p id="console-answer-text" class="text-brand-text italic text-[11px] leading-relaxed">
+              "-"
+            </p>
+            <div class="pt-2 border-t border-brand-border flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="console-file-tag" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-surfaceElevated text-brand-pastel border border-brand-border">FILE</span>
+                <span id="console-file-name" class="font-mono text-brand-pastel text-xs">-</span>
+              </div>
+              <a
+                id="console-download-btn"
+                href="#"
+                download
+                target="_blank"
+                class="text-xs font-mono text-brand-pastel hover:underline flex items-center gap-1"
+              >
+                Unduh &darr;
+              </a>
+            </div>
+
+          <!-- Form with Quick Presets -->
+          <form onsubmit="handleConsoleGradingSubmit(event)" class="space-y-3 pt-1 text-xs">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="console-score-input" class="block font-mono text-brand-muted">
+                  Skor Nilai (0 - 100)
+                </label>
+                <!-- Quick Rubric Presets -->
+                <div class="flex items-center gap-1 font-mono text-[10px]">
+                  <button type="button" onclick="setPresetScore(100)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">100</button>
+                  <button type="button" onclick="setPresetScore(90)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">90</button>
+                  <button type="button" onclick="setPresetScore(85)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">85</button>
+                  <button type="button" onclick="setPresetScore(75)" class="px-1.5 py-0.5 rounded bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel">75</button>
+                </div>
+              </div>
+              <input
+                type="number"
+                id="console-score-input"
+                min="0"
+                max="100"
+                required
+                placeholder="Contoh: 85"
+                class="input-field w-full px-3 py-2 text-sm font-bold font-mono text-brand-pastel rounded-lg"
+              />
+            </div>
+
+            <div>
+              <label for="console-feedback-input" class="block font-mono text-brand-muted mb-1">
+                Catatan Guru
+              </label>
+              <textarea
+                id="console-feedback-input"
+                rows="3"
+                placeholder="Tuliskan catatan evaluasi..."
+                class="input-field w-full p-2.5 text-xs rounded-lg leading-relaxed"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full py-2.5 px-4 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas font-bold text-xs transition shadow-sm"
+            >
+              Simpan & Publikasikan Nilai
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 3: BUKU NILAI ================= -->
+    <section id="view-gradebook" class="hidden space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-brand-border">
+        <div>
+          <h1 class="text-base font-bold text-brand-text">Buku Nilai Siswa</h1>
+          <p class="text-xs text-brand-muted">Rekap nilai akademik terintegrasi dengan kiriman siswa.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            onclick="showToast('Data berhasil diekspor ke CSV.')"
+            class="px-3 py-1.5 rounded-lg bg-brand-surface hover:bg-brand-surfaceElevated border border-brand-border text-xs font-mono text-brand-text transition"
+          >
+            Ekspor CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-brand-canvas text-brand-pastel border-b border-brand-border font-mono text-[11px]">
+              <tr>
+                <th class="py-2.5 px-4">Nama Siswa</th>
+                <th class="py-2.5 px-4">Kelas</th>
+                <th class="py-2.5 px-4">Tugas 01</th>
+                <th class="py-2.5 px-4">Praktikum 03</th>
+                <th class="py-2.5 px-4">Rata-Rata</th>
+                <th class="py-2.5 px-4 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="gradebook-tbody" class="divide-y divide-brand-border font-medium">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 4: SISWA & ROMBEL ================= -->
+    <section id="view-roster" class="hidden space-y-6">
+      
+      <div class="pb-3 border-b border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 class="text-base font-bold text-brand-text">Kelola Kelas & Siswa</h1>
+          <p class="text-xs text-brand-muted">Akses penuh untuk menambah kelas, siswa, dan rombel.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            onclick="openAddClassModal()"
+            class="px-3 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Tambah Kelas</span>
+          </button>
+          <button
+            type="button"
+            onclick="openAddStudentModal()"
+            class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Tambah Siswa</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Classes Cards Grid -->
+      <div class="space-y-2">
+        <h2 class="text-xs font-mono uppercase text-brand-subtle">Daftar Rombongan Belajar</h2>
+        <div id="classes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="space-y-2 pt-2">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-mono uppercase text-brand-subtle">Daftar Siswa Terdaftar</h2>
+          <span class="text-xs font-mono text-brand-muted" id="roster-total-count">0 Siswa</span>
+        </div>
+
+        <div class="bg-brand-surface border border-brand-border rounded-xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-brand-canvas text-brand-pastel border-b border-brand-border font-mono text-[11px]">
+                <tr>
+                  <th class="py-2.5 px-4">Nama Siswa</th>
+                  <th class="py-2.5 px-4">NISN</th>
+                  <th class="py-2.5 px-4">Kelas</th>
+                  <th class="py-2.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="students-tbody" class="divide-y divide-brand-border font-medium">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL 1: BUAT / EDIT TUGAS ================= -->
+  <div
+    id="modal-task"
+    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-lg w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
+        <h2 id="modal-task-title" class="text-xs font-mono font-bold uppercase text-brand-pale">Buat Tugas Baru</h2>
+        <button type="button" onclick="closeTaskModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+      </div>
+
+      <form id="task-form" onsubmit="handleTaskFormSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        <input type="hidden" id="task-edit-id" value="" />
+        
+        <div>
+          <label for="task-title-input" class="block font-mono text-brand-muted mb-1">Judul Tugas</label>
+          <input
+            type="text"
+            id="task-title-input"
+            required
+            placeholder="Contoh: Praktikum 04: Query Join MySQL"
+            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="task-class-select" class="block font-mono text-brand-muted mb-1">Kelas Tujuan</label>
+            <select id="task-class-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div>
+            <label for="task-subject-select" class="block font-mono text-brand-muted mb-1">Mata Pelajaran</label>
+            <select id="task-subject-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+              <option value="Pemrograman Web">Pemrograman Web</option>
+              <option value="Basis Data">Basis Data</option>
+              <option value="Pemrograman Web Lanjut">Pemrograman Web Lanjut</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="task-due-input" class="block font-mono text-brand-muted mb-1">Batas Waktu (Tenggat)</label>
+          <input
+            type="datetime-local"
+            id="task-due-input"
+            required
+            class="input-field w-full px-3 py-2 rounded-lg font-mono text-xs"
+          />
+        </div>
+
+        <div>
+          <label for="task-desc-input" class="block font-mono text-brand-muted mb-1">Instruksi Tugas</label>
+          <textarea
+            id="task-desc-input"
+            rows="3"
+            required
+            placeholder="Tuliskan petunjuk pengerjaan..."
+            class="input-field w-full p-2.5 rounded-lg text-xs leading-relaxed"
+          ></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onclick="closeTaskModal()"
+            class="px-3.5 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            id="task-submit-btn"
+            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+          >
+            Terbitkan ke Siswa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 2: TAMBAH SISWA ================= -->
+  <div
+    id="modal-add-student"
+    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-sm w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
+        <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Tambah Siswa Baru</h2>
+        <button type="button" onclick="closeAddStudentModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+      </div>
+
+      <form id="add-student-form" onsubmit="handleAddStudentSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        <div>
+          <label for="student-name-input" class="block font-mono text-brand-muted mb-1">Nama Lengkap Siswa</label>
+          <input
+            type="text"
+            id="student-name-input"
+            required
+            placeholder="Contoh: Fajar Pratama"
+            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+          />
+        </div>
+
+        <div>
+          <label for="student-nisn-input" class="block font-mono text-brand-muted mb-1">NISN (10 Digit)</label>
+          <input
+            type="text"
+            id="student-nisn-input"
+            required
+            pattern="[0-9]{10}"
+            placeholder="Contoh: 0081293830"
+            class="input-field w-full px-3 py-2 rounded-lg font-mono text-xs"
+          />
+        </div>
+
+        <div>
+          <label for="student-class-select" class="block font-mono text-brand-muted mb-1">Pilih Kelas</label>
+          <select id="student-class-select" required class="input-field w-full px-3 py-2 rounded-lg text-xs">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onclick="closeAddStudentModal()"
+            class="px-3 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+          >
+            Simpan Siswa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 3: TAMBAH KELAS ================= -->
+  <div
+    id="modal-add-class"
+    class="fixed inset-0 z-50 bg-brand-canvas/80 backdrop-blur-sm hidden flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-sm w-full overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-5 py-4 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
+        <h2 class="text-xs font-mono font-bold uppercase text-brand-pale">Tambah Rombel Kelas</h2>
+        <button type="button" onclick="closeAddClassModal()" class="text-brand-subtle hover:text-brand-text text-base leading-none">&times;</button>
+      </div>
+
+      <form id="add-class-form" onsubmit="handleAddClassSubmit(event)" class="p-5 space-y-3.5 text-xs">
+        <div>
+          <label for="class-name-input" class="block font-mono text-brand-muted mb-1">Nama Rombel / Kelas</label>
+          <input
+            type="text"
+            id="class-name-input"
+            required
+            placeholder="Contoh: XI RPL 2"
+            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+          />
+        </div>
+
+        <div>
+          <label for="class-subject-input" class="block font-mono text-brand-muted mb-1">Mata Pelajaran</label>
+          <input
+            type="text"
+            id="class-subject-input"
+            required
+            placeholder="Contoh: Pemrograman Mobile"
+            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+          />
+        </div>
+
+        <div>
+          <label for="class-homeroom-input" class="block font-mono text-brand-muted mb-1">Wali Kelas</label>
+          <input
+            type="text"
+            id="class-homeroom-input"
+            required
+            placeholder="Contoh: Dra. Siti Aminah"
+            class="input-field w-full px-3 py-2 rounded-lg text-xs"
+          />
+        </div>
+
+        <div class="pt-3 border-t border-brand-border flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onclick="closeAddClassModal()"
+            class="px-3 py-1.5 text-xs text-brand-muted hover:text-brand-text rounded-lg transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-1.5 text-xs font-bold bg-brand-violet hover:bg-brand-violetHover text-brand-canvas rounded-lg transition"
+          >
+            Simpan Kelas
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div
+    id="toast"
+    class="fixed bottom-5 right-5 z-50 bg-brand-surface border border-brand-border text-brand-text px-4 py-2.5 rounded-lg text-xs font-mono hidden flex items-center gap-2 shadow-2xl"
+    role="status"
+  >
+    <span class="w-2 h-2 rounded-full bg-brand-success"></span>
+    <span id="toast-message">Operasi berhasil.</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    let taskList = [];
+    let classList = [];
+    let studentList = [];
+    let submissionList = [];
+    let activeSubmissionId = null;
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2600);
+    }
+
+    // ================= SINKRONISASI API REST =================
+    async function syncFromApi() {
+      try {
+        const [rTasks, rSubs, rClasses, rStudents] = await Promise.all([
+          fetch('/api/tasks').then(r => r.json()),
+          fetch('/api/submissions').then(r => r.json()),
+          fetch('/api/classes').then(r => r.json()),
+          fetch('/api/students').then(r => r.json())
+        ]);
+        taskList = rTasks;
+        submissionList = rSubs;
+        classList = rClasses;
+        studentList = rStudents;
+
+        if (submissionList.length > 0 && !activeSubmissionId) {
+          activeSubmissionId = submissionList[0].id;
+        }
+
+        renderCoursework();
+        renderSubmissions();
+        renderGradebook();
+        renderRoster();
+        showToast('Sinkronisasi data API berhasil.');
+      } catch (e) {
+        // Fallback default
+      }
+    }
+
+    function switchView(viewKey) {
+      const views = ['coursework', 'grading', 'gradebook', 'roster'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const tabBtn = document.getElementById(`tab-btn-${v}`);
+        const mobBtn = document.getElementById(`mob-btn-${v}`);
+        
+        if (el) el.classList.add('hidden');
+        if (tabBtn) {
+          tabBtn.classList.remove('text-brand-canvas', 'bg-brand-violet', 'font-bold', 'shadow-sm');
+          tabBtn.classList.add('text-brand-muted');
+        }
+        if (mobBtn) {
+          mobBtn.classList.remove('text-brand-violet', 'font-bold');
+          mobBtn.classList.add('text-brand-muted');
+        }
+      });
+
+      const activeEl = document.getElementById(`view-${viewKey}`);
+      const activeTabBtn = document.getElementById(`tab-btn-${viewKey}`);
+      const activeMobBtn = document.getElementById(`mob-btn-${viewKey}`);
+
+      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeTabBtn) {
+        activeTabBtn.classList.remove('text-brand-muted');
+        activeTabBtn.classList.add('text-brand-canvas', 'bg-brand-violet', 'font-bold', 'shadow-sm');
+      }
+      if (activeMobBtn) {
+        activeMobBtn.classList.remove('text-brand-muted');
+        activeMobBtn.classList.add('text-brand-violet', 'font-bold');
+      }
+
+      if (viewKey === 'coursework') renderCoursework();
+      if (viewKey === 'grading') renderSubmissions();
+      if (viewKey === 'gradebook') renderGradebook();
+      if (viewKey === 'roster') renderRoster();
+    }
+
+    // ================= CRUD TUGAS =================
+    function renderCoursework(filterClass = 'all', searchQuery = '') {
+      const container = document.getElementById('coursework-stream-container');
+      container.innerHTML = '';
+
+      const classSelect = document.getElementById('class-filter-select');
+      const currentSelected = classSelect.value || 'all';
+      classSelect.innerHTML = '<option value="all">Semua Kelas</option>';
+      classList.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = `${c.name} (${c.subject.split('&')[0].trim()})`;
+        if (c.name === currentSelected) opt.selected = true;
+        classSelect.appendChild(opt);
+      });
+
+      const activeClasses = filterClass === 'all' ? classList : classList.filter(c => c.name === filterClass);
+
+      activeClasses.forEach(cls => {
+        const classTasks = taskList.filter(t => {
+          const matchClass = t.targetClass === cls.name;
+          const matchSearch = searchQuery.length === 0 || t.title.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchClass && matchSearch;
+        });
+
+        if (filterClass !== 'all' && classTasks.length === 0 && searchQuery.length > 0) return;
+
+        const block = document.createElement('div');
+        block.className = 'class-stream-block space-y-3';
+        block.setAttribute('data-class', cls.name);
+
+        let tasksHtml = '';
+        if (classTasks.length === 0) {
+          tasksHtml = `
+            <div class="bg-brand-surface border border-dashed border-brand-border rounded-xl p-4 text-center text-xs text-brand-muted font-mono">
+              Belum ada tugas di kelas ${cls.name}. 
+              <button onclick="openCreateTaskModalForClass('${cls.name}', '${cls.subject.split('&')[0].trim()}')" class="text-brand-pastel hover:underline ml-1">Buat tugas sekarang</button>
+            </div>
+          `;
+        } else {
+          tasksHtml = classTasks.map(task => {
+            const percent = task.totalStudents > 0 ? Math.round((task.submittedCount / task.totalStudents) * 100) : 0;
+            return `
+              <div class="bg-brand-surface border border-brand-border rounded-xl p-4 space-y-3 hover:border-brand-borderHover transition">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-mono uppercase px-1.5 py-0.2 rounded bg-brand-surfaceElevated text-brand-pastel border border-brand-border">
+                        ${task.subject}
+                      </span>
+                      <span class="text-[10px] font-mono ${task.status === 'published' ? 'text-brand-success' : 'text-brand-warning'}">
+                        ${task.status === 'published' ? 'Diterbitkan' : 'Draf'}
+                      </span>
+                    </div>
+                    <h3 class="text-sm font-bold text-brand-text">
+                      ${task.title}
+                    </h3>
+                    <p class="text-xs text-brand-muted leading-relaxed">
+                      ${task.desc}
+                    </p>
+                  </div>
+                  
+                  <div class="text-right sm:flex-shrink-0 font-mono text-xs text-brand-muted">
+                    <span class="text-brand-warning block font-semibold">Tenggat: ${task.dueFormatted}</span>
+                    <span class="text-[11px] text-brand-subtle">${task.submittedCount} dari ${task.totalStudents} Siswa Mengumpulkan</span>
+                  </div>
+                </div>
+
+                <div class="pt-3 border-t border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div class="flex-1 max-w-xs space-y-1">
+                    <div class="w-full bg-brand-surfaceElevated h-1 rounded-full overflow-hidden border border-brand-border">
+                      <div class="bg-brand-violet h-full rounded-full" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="text-[10px] font-mono text-brand-muted">Progress: ${percent}% (${task.submittedCount} siswa)</div>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onclick="openEditTaskModal(${task.id})"
+                      class="px-2.5 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel text-xs font-mono transition"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onclick="deleteTask(${task.id})"
+                      class="px-2.5 py-1.5 rounded-lg bg-brand-surfaceElevated hover:bg-brand-danger/20 text-brand-subtle hover:text-brand-danger text-xs font-mono transition"
+                    >
+                      Hapus
+                    </button>
+                    <button
+                      type="button"
+                      onclick="switchView('grading')"
+                      class="px-3 py-1.5 rounded-lg bg-brand-violet hover:bg-brand-violetHover text-brand-canvas font-bold transition text-xs shadow-sm"
+                    >
+                      Tinjau Kiriman (${task.submittedCount})
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        block.innerHTML = `
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-brand-text">${cls.name}</h2>
+              <span class="text-xs text-brand-muted font-mono">&bull; ${cls.subject} (${cls.count} Siswa)</span>
+            </div>
+            <button
+              type="button"
+              onclick="openCreateTaskModalForClass('${cls.name}', '${cls.subject.split('&')[0].trim()}')"
+              class="text-xs font-mono text-brand-pastel hover:underline"
+            >
+              + Buat di ${cls.name}
+            </button>
+          </div>
+          ${tasksHtml}
+        `;
+        container.appendChild(block);
+      });
+    }
+
+    function openCreateTaskModal() {
+      document.getElementById('modal-task-title').textContent = 'Buat Tugas Baru';
+      document.getElementById('task-submit-btn').textContent = 'Terbitkan ke Siswa';
+      document.getElementById('task-edit-id').value = '';
+      document.getElementById('task-form').reset();
+      
+      const sel = document.getElementById('task-class-select');
+      sel.innerHTML = '';
+      classList.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+
+      document.getElementById('modal-task').classList.remove('hidden');
+      document.getElementById('task-title-input').focus();
+    }
+
+    function openCreateTaskModalForClass(cls, mapel) {
+      openCreateTaskModal();
+      document.getElementById('task-class-select').value = cls;
+      if (mapel) document.getElementById('task-subject-select').value = mapel;
+    }
+
+    function openEditTaskModal(id) {
+      const task = taskList.find(t => t.id === id);
+      if (!task) return;
+
+      document.getElementById('modal-task-title').textContent = 'Edit Tugas';
+      document.getElementById('task-submit-btn').textContent = 'Simpan Perubahan';
+      document.getElementById('task-edit-id').value = String(task.id);
+      
+      const sel = document.getElementById('task-class-select');
+      sel.innerHTML = '';
+      classList.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = c.name;
+        if (c.name === task.targetClass) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      document.getElementById('task-title-input').value = task.title;
+      document.getElementById('task-subject-select').value = task.subject;
+      document.getElementById('task-due-input').value = task.due;
+      document.getElementById('task-desc-input').value = task.desc;
+
+      document.getElementById('modal-task').classList.remove('hidden');
+      document.getElementById('task-title-input').focus();
+    }
+
+    function closeTaskModal() {
+      document.getElementById('modal-task').classList.add('hidden');
+    }
+
+    async function handleTaskFormSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById('task-edit-id').value;
+      const title = document.getElementById('task-title-input').value.trim();
+      const cls = document.getElementById('task-class-select').value;
+      const subject = document.getElementById('task-subject-select').value;
+      const due = document.getElementById('task-due-input').value;
+      const desc = document.getElementById('task-desc-input').value.trim();
+
+      const dueFormatted = due ? due.replace('T', ', ') + ' WIB' : 'Sesuai jadwal';
+      const targetClassObj = classList.find(c => c.name === cls);
+      const totalStudents = targetClassObj ? targetClassObj.count : 30;
+
+      if (editId) {
+        const task = taskList.find(t => t.id === parseInt(editId, 10));
+        if (task) {
+          task.title = title;
+          task.targetClass = cls;
+          task.subject = subject;
+          task.due = due;
+          task.dueFormatted = dueFormatted;
+          task.desc = desc;
+          showToast(`Tugas "${title}" berhasil diperbarui.`);
+        }
+      } else {
+        // Send POST to /api/tasks
+        try {
+          const res = await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, subject, targetClass: cls, due, desc })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            taskList.unshift(data.task);
+          }
+        } catch (err) {
+          const newTask = {
+            id: Date.now(),
+            title, subject, targetClass: cls, due, dueFormatted,
+            status: 'published',
+            submittedCount: 0,
+            totalStudents,
+            desc
+          };
+          taskList.unshift(newTask);
+        }
+        showToast(`Tugas "${title}" diterbitkan ke kelas ${cls}.`);
+      }
+
+      closeTaskModal();
+      renderCoursework(document.getElementById('class-filter-select').value);
+    }
+
+    function deleteTask(id) {
+      const task = taskList.find(t => t.id === id);
+      if (!task) return;
+      if (confirm(`Hapus tugas "${task.title}"?`)) {
+        taskList = taskList.filter(t => t.id !== id);
+        showToast('Tugas berhasil dihapus.');
+        renderCoursework(document.getElementById('class-filter-select').value);
+      }
+    }
+
+    function filterCoursework() {
+      const cls = document.getElementById('class-filter-select').value;
+      renderCoursework(cls);
+    }
+
+    function searchCoursework(e) {
+      const q = e.target.value;
+      renderCoursework(document.getElementById('class-filter-select').value, q);
+    }
+
+    // ================= GRADING CONSOLE =================
+    function renderSubmissions() {
+      const container = document.getElementById('submissions-list-container');
+      container.innerHTML = '';
+      document.getElementById('queue-pending-badge').textContent = `${submissionList.length} Menunggu Nilai`;
+      document.getElementById('badge-pending-count').textContent = submissionList.length;
+
+      if (submissionList.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center text-brand-muted font-mono text-xs">Semua kiriman sudah dinilai.</div>';
+        return;
+      }
+
+      submissionList.forEach((sub, idx) => {
+        const isActive = sub.id === activeSubmissionId;
+        const row = document.createElement('div');
+        row.className = `p-4 hover:bg-brand-surfaceHover transition cursor-pointer flex items-start justify-between gap-3 ${isActive ? 'bg-brand-surfaceElevated/70 border-l-2 border-brand-violet' : ''}`;
+        row.onclick = () => selectSubmissionById(sub.id);
+        row.innerHTML = `
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-brand-text">${sub.student}</span>
+              <span class="font-mono text-[11px] text-brand-subtle">${sub.nisn}</span>
+            </div>
+            <div class="text-[11px] text-brand-muted">
+              ${sub.taskTitle} &bull; Kelas ${sub.class}
+            </div>
+            <div class="flex items-center gap-2 pt-1 font-mono text-[11px] text-brand-pastel">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span>${sub.fileName}</span>
+            </div>
+          </div>
+
+          <div class="text-right space-y-1 font-mono">
+            <span class="px-2 py-0.5 rounded text-[10px] bg-brand-warning/20 text-brand-warning block">
+              ${sub.score !== null ? `Nilai: ${sub.score}` : 'Perlu Nilai'}
+            </span>
+            <span class="text-[10px] text-brand-subtle block">${sub.timeFormatted}</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      const activeSub = submissionList.find(s => s.id === activeSubmissionId) || submissionList[0];
+      if (activeSub) {
+        document.getElementById('console-student-name').textContent = `${activeSub.student} (${activeSub.nisn})`;
+        document.getElementById('console-class-badge').textContent = activeSub.class;
+        document.getElementById('console-task-title').textContent = activeSub.taskTitle;
+        document.getElementById('console-file-name').textContent = activeSub.fileName;
+        document.getElementById('console-answer-text').textContent = `"${activeSub.answerText}"`;
+        document.getElementById('console-score-input').value = activeSub.score !== null ? activeSub.score : '';
+        document.getElementById('console-feedback-input').value = activeSub.feedback || '';
+
+        // Dynamic file category tag & download URL
+        const fn = (activeSub.fileName || '').toLowerCase();
+        let tag = 'FILE';
+        if (fn.endsWith('.jpg') || fn.endsWith('.jpeg') || fn.endsWith('.png') || fn.endsWith('.webp')) tag = 'GAMBAR';
+        else if (fn.endsWith('.pdf')) tag = 'PDF';
+        else if (fn.endsWith('.zip') || fn.endsWith('.rar') || fn.endsWith('.7z')) tag = 'ARSIP';
+        else if (fn.endsWith('.html') || fn.endsWith('.css') || fn.endsWith('.js') || fn.endsWith('.dart') || fn.endsWith('.py') || fn.endsWith('.sql')) tag = 'KODE';
+        else if (fn.endsWith('.docx') || fn.endsWith('.doc')) tag = 'DOKUMEN';
+        
+        document.getElementById('console-file-tag').textContent = tag;
+        const dlBtn = document.getElementById('console-download-btn');
+        dlBtn.href = activeSub.fileUrl || ('/uploads/submissions/' + activeSub.fileName);
+        dlBtn.download = activeSub.fileName;
+      }
+    }
+
+    function selectSubmissionById(id) {
+      activeSubmissionId = id;
+      renderSubmissions();
+      document.getElementById('console-score-input').focus();
+    }
+
+    function setPresetScore(score) {
+      document.getElementById('console-score-input').value = score;
+    }
+
+    async function handleConsoleGradingSubmit(e) {
+      e.preventDefault();
+      const score = parseInt(document.getElementById('console-score-input').value, 10);
+      const feedback = document.getElementById('console-feedback-input').value.trim();
+      const sub = submissionList.find(s => s.id === activeSubmissionId);
+
+      if (sub) {
+        sub.score = score;
+        sub.feedback = feedback;
+        
+        try {
+          await fetch(`/api/submissions/${sub.id}/grade`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ score, feedback })
+          });
+        } catch (err) {}
+
+        const st = studentList.find(s => s.nisn === sub.nisn);
+        if (st) st.scoreTugas1 = score;
+
+        showToast(`Nilai ${score}/100 untuk ${sub.student.split(' ')[0]} disimpan.`);
+        renderSubmissions();
+      }
+    }
+
+    // ================= BUKU NILAI =================
+    function renderGradebook() {
+      const tbody = document.getElementById('gradebook-tbody');
+      tbody.innerHTML = '';
+
+      studentList.forEach(st => {
+        const scores = [st.scoreTugas1, st.scoreTugas2].filter(s => s !== null && s !== undefined);
+        const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '-';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-brand-surfaceElevated/50 transition';
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-brand-text">
+            ${st.name}
+            <span class="block text-[10px] font-mono text-brand-subtle">${st.nisn}</span>
+          </td>
+          <td class="py-3 px-4 font-mono text-brand-muted">${st.class}</td>
+          <td class="py-3 px-4 font-mono ${st.scoreTugas1 ? 'text-brand-success font-bold' : 'text-brand-warning'}">
+            ${st.scoreTugas1 !== null && st.scoreTugas1 !== undefined ? st.scoreTugas1 : 'Menunggu'}
+          </td>
+          <td class="py-3 px-4 font-mono ${st.scoreTugas2 ? 'text-brand-success font-bold' : 'text-brand-muted'}">
+            ${st.scoreTugas2 !== null && st.scoreTugas2 !== undefined ? st.scoreTugas2 : '-'}
+          </td>
+          <td class="py-3 px-4 font-mono font-bold text-brand-text">${avg}</td>
+          <td class="py-3 px-4 text-right">
+            <button
+              type="button"
+              onclick="promptEditScore('${st.nisn}')"
+              class="px-2 py-0.5 rounded text-[11px] font-mono bg-brand-surfaceElevated hover:bg-brand-surfaceHover text-brand-pastel border border-brand-border"
+            >
+              Ubah
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function promptEditScore(nisn) {
+      const st = studentList.find(s => s.nisn === nisn);
+      if (!st) return;
+      const current = st.scoreTugas1 !== null && st.scoreTugas1 !== undefined ? st.scoreTugas1 : 85;
+      const val = prompt(`Masukkan nilai Tugas 01 untuk ${st.name} (0 - 100):`, String(current));
+      if (val !== null && val.trim() !== '') {
+        const num = parseInt(val, 10);
+        if (!isNaN(num) && num >= 0 && num <= 100) {
+          st.scoreTugas1 = num;
+          showToast(`Nilai ${st.name} diperbarui: ${num}`);
+          renderGradebook();
+        } else {
+          alert('Nilai harus berupa angka antara 0 sampai 100.');
+        }
+      }
+    }
+
+    // ================= CRUD KELAS & SISWA =================
+    function renderRoster() {
+      const classContainer = document.getElementById('classes-grid');
+      classContainer.innerHTML = '';
+      classList.forEach(cls => {
+        const studentCount = studentList.filter(s => s.class === cls.name).length;
+        cls.count = studentCount > 0 ? studentCount : cls.count;
+
+        const card = document.createElement('div');
+        card.className = 'bg-brand-surface border border-brand-border rounded-xl p-4 space-y-2';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-brand-text">${cls.name}</h3>
+            <span class="font-mono text-xs text-brand-pastel">${cls.count} Siswa</span>
+          </div>
+          <p class="text-xs text-brand-muted">${cls.subject}</p>
+          <div class="pt-2 border-t border-brand-border text-[11px] text-brand-subtle font-mono flex items-center justify-between">
+            <span>Wali: ${cls.homeroom}</span>
+            <button onclick="deleteClass(${cls.id})" class="text-brand-subtle hover:text-brand-danger text-[10px]">Hapus</button>
+          </div>
+        `;
+        classContainer.appendChild(card);
+      });
+
+      const studentTbody = document.getElementById('students-tbody');
+      studentTbody.innerHTML = '';
+      document.getElementById('roster-total-count').textContent = `${studentList.length} Siswa Terdaftar`;
+
+      studentList.forEach(st => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-brand-surfaceElevated/50 transition';
+        tr.innerHTML = `
+          <td class="py-2.5 px-4 font-bold text-brand-text">${st.name}</td>
+          <td class="py-2.5 px-4 font-mono text-brand-muted">${st.nisn}</td>
+          <td class="py-2.5 px-4 font-mono text-brand-pastel">${st.class}</td>
+          <td class="py-2.5 px-4 text-right">
+            <button
+              type="button"
+              onclick="deleteStudent(${st.id})"
+              class="px-2 py-0.5 rounded text-[11px] font-mono text-brand-subtle hover:text-brand-danger hover:bg-brand-danger/10 transition"
+            >
+              Hapus
+            </button>
+          </td>
+        `;
+        studentTbody.appendChild(tr);
+      });
+    }
+
+    function openAddStudentModal() {
+      const sel = document.getElementById('student-class-select');
+      sel.innerHTML = '';
+      classList.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.name;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+
+      document.getElementById('add-student-form').reset();
+      document.getElementById('modal-add-student').classList.remove('hidden');
+      document.getElementById('student-name-input').focus();
+    }
+
+    function closeAddStudentModal() {
+      document.getElementById('modal-add-student').classList.add('hidden');
+    }
+
+    function handleAddStudentSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('student-name-input').value.trim();
+      const nisn = document.getElementById('student-nisn-input').value.trim();
+      const cls = document.getElementById('student-class-select').value;
+
+      if (studentList.some(s => s.nisn === nisn)) {
+        alert('NISN ini sudah terdaftar!');
+        return;
+      }
+
+      studentList.push({
+        id: Date.now(),
+        name, nisn, class: cls,
+        scoreTugas1: null,
+        scoreTugas2: null
+      });
+
+      closeAddStudentModal();
+      showToast(`Siswa "${name}" berhasil ditambahkan ke kelas ${cls}.`);
+      renderRoster();
+    }
+
+    function deleteStudent(id) {
+      const st = studentList.find(s => s.id === id);
+      if (!st) return;
+      if (confirm(`Hapus siswa "${st.name}"?`)) {
+        studentList = studentList.filter(s => s.id !== id);
+        showToast('Siswa berhasil dihapus.');
+        renderRoster();
+      }
+    }
+
+    function openAddClassModal() {
+      document.getElementById('add-class-form').reset();
+      document.getElementById('modal-add-class').classList.remove('hidden');
+      document.getElementById('class-name-input').focus();
+    }
+
+    function closeAddClassModal() {
+      document.getElementById('modal-add-class').classList.add('hidden');
+    }
+
+    function handleAddClassSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('class-name-input').value.trim();
+      const subject = document.getElementById('class-subject-input').value.trim();
+      const homeroom = document.getElementById('class-homeroom-input').value.trim();
+
+      if (classList.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        alert('Kelas dengan nama ini sudah ada!');
+        return;
+      }
+
+      classList.push({
+        id: Date.now(),
+        name, subject, homeroom, count: 0
+      });
+
+      closeAddClassModal();
+      showToast(`Kelas "${name}" berhasil ditambahkan.`);
+      renderRoster();
+      renderCoursework();
+    }
+
+    function deleteClass(id) {
+      const cls = classList.find(c => c.id === id);
+      if (!cls) return;
+      if (confirm(`Hapus rombel kelas "${cls.name}"?`)) {
+        classList = classList.filter(c => c.id !== id);
+        showToast(`Kelas "${cls.name}" dihapus.`);
+        renderRoster();
+        renderCoursework();
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('pngumpul_session');
+      window.location.href = 'login.html';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeTaskModal();
+        closeAddStudentModal();
+        closeAddClassModal();
+      }
+    });
+
+    // Start with API sync
+    syncFromApi();
+  </script>
+</body>
+</html>

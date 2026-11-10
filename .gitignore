@@ -1,0 +1,28 @@
+# System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+*.log
+
+# Flutter & Dart Build Artifacts
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/.pub-cache/
+app/.pub/
+app/build/
+
+# Android Gradle Artifacts
+app/android/.gradle/
+app/android/local.properties
+app/android/app/build/
+
+# Windows C++ Artifacts
+app/windows/flutter/ephemeral/
+
+# Large binaries (built APKs can be generated with flutter build apk)
+*.rar
+*.zip
