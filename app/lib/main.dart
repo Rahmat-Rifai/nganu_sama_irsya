@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 void main() {
   runApp(const PngumpulApp());
 }
@@ -988,6 +989,48 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       }
     }
   }
+  /// Mengambil foto langsung dari Kamera HP
+  Future<void> _capturePhotoFromCamera() async {
+    try {
+      final picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+
+      if (photo != null) {
+        final bytes = await photo.readAsBytes();
+        final now = DateTime.now();
+        final name = 'Foto_Tugas_${now.hour}${now.minute}${now.second}.jpg';
+        setState(() {
+          _selectedFileName = name;
+          _selectedFileBytes = bytes;
+          if (bytes.length >= 1024 * 1024) {
+            _fileSize = '${(bytes.length / (1024 * 1024)).toStringAsFixed(2)} MB';
+          } else {
+            _fileSize = '${(bytes.length / 1024).toStringAsFixed(1)} KB';
+          }
+          _detectFileType(name);
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.surfaceElevated,
+              content: Text('Foto kamera terlampir: $name'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Batal atau gagal membuka kamera: $e')),
+        );
+      }
+    }
+  }
   void _handleSubmit() async {
     if (_answerController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1136,7 +1179,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            // Label Header with real File Explorer + trigger
+            // Header Label with quick action buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -1145,64 +1188,106 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   style: TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.muted),
                 ),
                 if (_selectedFileName != null)
-                  TextButton.icon(
-                    onPressed: _pickFileFromExplorer,
-                    icon: const Icon(Icons.add, size: 14, color: AppColors.violet),
-                    label: const Text('Ganti Berkas', style: TextStyle(fontSize: 11, color: AppColors.violet)),
-                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // If no file selected yet -> Show prominent `+` button opening Native Android File Explorer!
-            if (_selectedFileName == null) ...[
-              GestureDetector(
-                onTap: _pickFileFromExplorer,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.violet.withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Row(
                     children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.violet.withOpacity(0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.add, size: 24, color: AppColors.violet),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Pilih Berkas dari HP (+)',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.text,
+                      GestureDetector(
+                        onTap: _capturePhotoFromCamera,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(Icons.camera_alt_outlined, size: 16, color: AppColors.violet),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Buka File Explorer: Gambar, Foto, Dokumen, PDF, ZIP, dll',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.muted,
-                        ),
+                      const SizedBox(width: 6),
+                      GestureDetector(
+                        onTap: _pickFileFromExplorer,
+                        child: const Text('Ganti (+)', style: TextStyle(fontSize: 11, color: AppColors.violet, fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ),
-                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // If no file selected yet -> Show dual prominent buttons: Camera & File Explorer
+            if (_selectedFileName == null) ...[
+              Row(
+                children: [
+                  // 1. Camera Photo Button
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _capturePhotoFromCamera,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: AppColors.violet.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.camera_alt, size: 20, color: AppColors.violet),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Foto Tugas',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.text),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'Jepret Kamera HP',
+                              style: TextStyle(fontSize: 10, color: AppColors.muted),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // 2. Native File Explorer Button
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _pickFileFromExplorer,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: AppColors.pastel.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.add, size: 22, color: AppColors.pastel),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Pilih Berkas (+)',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.text),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'PDF, ZIP, File HP',
+                              style: TextStyle(fontSize: 10, color: AppColors.muted),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ] else ...[
               // Attached File Card

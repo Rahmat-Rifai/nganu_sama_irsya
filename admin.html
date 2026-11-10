@@ -278,21 +278,32 @@
               "-"
             </p>
             <div class="pt-2 border-t border-brand-border flex items-center justify-between">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 truncate">
                 <span id="console-file-tag" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-surfaceElevated text-brand-pastel border border-brand-border">FILE</span>
-                <span id="console-file-name" class="font-mono text-brand-pastel text-xs">-</span>
+                <span id="console-file-name" class="font-mono text-brand-pastel text-xs truncate max-w-[150px]">-</span>
               </div>
-              <a
-                id="console-download-btn"
-                href="#"
-                download
-                target="_blank"
-                class="text-xs font-mono text-brand-pastel hover:underline flex items-center gap-1"
-              >
-                Unduh &darr;
-              </a>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  id="console-preview-btn"
+                  onclick="previewCurrentFile()"
+                  class="text-xs font-mono text-brand-pale bg-brand-surfaceElevated hover:bg-brand-surfaceHover px-2 py-1 rounded border border-brand-border flex items-center gap-1 transition"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span>Lihat</span>
+                </button>
+                <a
+                  id="console-download-btn"
+                  href="#"
+                  download
+                  target="_blank"
+                  class="text-xs font-mono text-brand-pastel hover:underline flex items-center gap-1"
+                >
+                  Unduh &darr;
+                </a>
+              </div>
             </div>
-
+          </div>
           <!-- Form with Quick Presets -->
           <form onsubmit="handleConsoleGradingSubmit(event)" class="space-y-3 pt-1 text-xs">
             <div>
@@ -662,6 +673,37 @@
       </form>
     </div>
   </div>
+  <!-- ================= MODAL 4: PRATINJAU BERKAS (IN-BROWSER FILE PREVIEW) ================= -->
+  <div
+    id="modal-preview-file"
+    class="fixed inset-0 z-50 bg-brand-canvas/90 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="bg-brand-surface rounded-xl border border-brand-border max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div class="px-5 py-3 border-b border-brand-border flex items-center justify-between bg-brand-canvas">
+        <div class="flex items-center gap-2.5 truncate">
+          <span id="modal-preview-tag" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-surfaceElevated text-brand-pastel border border-brand-border">PDF</span>
+          <h2 id="modal-preview-title" class="text-xs font-mono font-bold text-brand-text truncate max-w-md">Nama_Berkas.pdf</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <a
+            id="modal-preview-download-link"
+            href="#"
+            download
+            class="text-xs font-mono text-brand-pastel hover:underline px-2.5 py-1 rounded bg-brand-surfaceElevated border border-brand-border"
+          >
+            Unduh Asli &darr;
+          </a>
+          <button type="button" onclick="closePreviewModal()" class="text-brand-subtle hover:text-brand-text text-lg leading-none p-1">&times;</button>
+        </div>
+      </div>
+
+      <div id="modal-preview-body" class="p-4 overflow-auto flex-1 flex items-center justify-center bg-brand-canvas min-h-[350px] max-h-[75vh]">
+        <!-- Dynamic content: Image, Iframe, or Code/Text -->
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification -->
   <div
@@ -1023,6 +1065,19 @@
 
       submissionList.forEach((sub, idx) => {
         const isActive = sub.id === activeSubmissionId;
+        const task = taskList.find(t => t.id === sub.taskId || (sub.taskTitle && t.title.toLowerCase().includes(sub.taskTitle.toLowerCase())));
+        
+        let timingBadge = '';
+        if (task && task.due) {
+          const dueTime = new Date(task.due).getTime();
+          const subTime = sub.id > 1000000000 ? sub.id : Date.now();
+          if (subTime > dueTime) {
+            timingBadge = '<span class="text-[9px] font-mono font-bold text-brand-danger bg-brand-danger/10 px-1.5 py-0.2 rounded border border-brand-danger/20">Terlambat</span>';
+          } else {
+            timingBadge = '<span class="text-[9px] font-mono font-bold text-brand-success bg-brand-success/10 px-1.5 py-0.2 rounded border border-brand-success/20">Tepat Waktu</span>';
+          }
+        }
+
         const row = document.createElement('div');
         row.className = `p-4 hover:bg-brand-surfaceHover transition cursor-pointer flex items-start justify-between gap-3 ${isActive ? 'bg-brand-surfaceElevated/70 border-l-2 border-brand-violet' : ''}`;
         row.onclick = () => selectSubmissionById(sub.id);
@@ -1041,10 +1096,13 @@
             </div>
           </div>
 
-          <div class="text-right space-y-1 font-mono">
-            <span class="px-2 py-0.5 rounded text-[10px] bg-brand-warning/20 text-brand-warning block">
-              ${sub.score !== null ? `Nilai: ${sub.score}` : 'Perlu Nilai'}
-            </span>
+          <div class="text-right space-y-1.5 font-mono">
+            <div class="flex items-center justify-end gap-1">
+              ${timingBadge}
+              <span class="px-2 py-0.5 rounded text-[10px] bg-brand-warning/20 text-brand-warning">
+                ${sub.score !== null ? `Nilai: ${sub.score}` : 'Perlu Nilai'}
+              </span>
+            </div>
             <span class="text-[10px] text-brand-subtle block">${sub.timeFormatted}</span>
           </div>
         `;
@@ -1075,6 +1133,74 @@
         dlBtn.href = activeSub.fileUrl || ('/uploads/submissions/' + activeSub.fileName);
         dlBtn.download = activeSub.fileName;
       }
+    }
+
+    function previewCurrentFile() {
+      const activeSub = submissionList.find(s => s.id === activeSubmissionId) || submissionList[0];
+      if (!activeSub) return;
+
+      const fn = (activeSub.fileName || '').toLowerCase();
+      const url = activeSub.fileUrl || ('/uploads/submissions/' + activeSub.fileName);
+
+      let tag = 'BERKAS';
+      if (fn.endsWith('.jpg') || fn.endsWith('.jpeg') || fn.endsWith('.png') || fn.endsWith('.webp') || fn.endsWith('.svg')) tag = 'GAMBAR';
+      else if (fn.endsWith('.pdf')) tag = 'PDF';
+      else if (fn.endsWith('.html') || fn.endsWith('.css') || fn.endsWith('.js') || fn.endsWith('.py') || fn.endsWith('.sql') || fn.endsWith('.dart') || fn.endsWith('.txt')) tag = 'KODE';
+      else if (fn.endsWith('.zip') || fn.endsWith('.rar') || fn.endsWith('.7z')) tag = 'ARSIP';
+
+      document.getElementById('modal-preview-tag').textContent = tag;
+      document.getElementById('modal-preview-title').textContent = `${activeSub.student} - ${activeSub.fileName}`;
+      document.getElementById('modal-preview-download-link').href = url;
+      document.getElementById('modal-preview-download-link').download = activeSub.fileName;
+
+      const body = document.getElementById('modal-preview-body');
+      body.innerHTML = '';
+
+      if (tag === 'GAMBAR') {
+        body.innerHTML = `
+          <div class="flex flex-col items-center justify-center p-2">
+            <img src="${url}" alt="${activeSub.fileName}" class="max-w-full max-h-[70vh] object-contain rounded-lg border border-brand-border shadow-md" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'p-8 text-center text-brand-muted font-mono\\'>Gambar simulasi tersimpan di server: ${activeSub.fileName}</div>'" />
+          </div>
+        `;
+      } else if (tag === 'PDF') {
+        body.innerHTML = `
+          <iframe src="${url}" class="w-full h-[70vh] rounded-lg border border-brand-border bg-brand-surface" title="Pratinjau PDF"></iframe>
+        `;
+      } else if (tag === 'KODE') {
+        body.innerHTML = `<div class="p-8 text-center text-brand-muted font-mono">Memuat teks berkas...</div>`;
+        fetch(url)
+          .then(r => r.text())
+          .then(text => {
+            body.innerHTML = `
+              <pre class="w-full h-[70vh] overflow-auto p-4 text-xs font-mono bg-[#09070c] text-brand-text rounded-lg border border-brand-border whitespace-pre-wrap leading-relaxed select-text">${escapeHtml(text)}</pre>
+            `;
+          })
+          .catch(() => {
+            body.innerHTML = `<pre class="w-full p-4 text-xs font-mono bg-[#09070c] text-brand-text rounded-lg border border-brand-border select-text">${escapeHtml(activeSub.answerText || 'Isi berkas kodingan siswa.')}</pre>`;
+          });
+      } else {
+        body.innerHTML = `
+          <div class="p-8 text-center space-y-3 font-mono">
+            <div class="w-12 h-12 rounded-xl bg-brand-surfaceElevated border border-brand-border mx-auto flex items-center justify-center text-brand-pastel">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <p class="text-xs text-brand-text font-bold">${activeSub.fileName}</p>
+            <p class="text-[11px] text-brand-muted">Format arsip biner dapat langsung diunduh ke komputer.</p>
+            <a href="${url}" download class="inline-block px-3 py-1.5 rounded-lg bg-brand-violet text-brand-canvas font-bold text-xs">Unduh Berkas ke Laptop</a>
+          </div>
+        `;
+      }
+
+      document.getElementById('modal-preview-file').classList.remove('hidden');
+    }
+
+    function closePreviewModal() {
+      document.getElementById('modal-preview-file').classList.add('hidden');
+      document.getElementById('modal-preview-body').innerHTML = '';
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function selectSubmissionById(id) {
@@ -1322,11 +1448,37 @@
         closeTaskModal();
         closeAddStudentModal();
         closeAddClassModal();
+        closePreviewModal();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('quick-search');
+        if (searchInput) searchInput.focus();
       }
     });
 
-    // Start with API sync
-    syncFromApi();
-  </script>
+    let previousSubCount = 0;
+    async function syncFromApiSilently() {
+      try {
+        const [rTasks, rSubs] = await Promise.all([
+          fetch('/api/tasks').then(r => r.json()),
+          fetch('/api/submissions').then(r => r.json())
+        ]);
+        taskList = rTasks;
+        if (previousSubCount > 0 && rSubs.length > previousSubCount) {
+          const diff = rSubs.length - previousSubCount;
+          showToast(`Ada ${diff} kiriman baru masuk dari siswa!`);
+        }
+        previousSubCount = rSubs.length;
+        submissionList = rSubs;
+        renderSubmissions();
+      } catch (_) {}
+    }
+
+    // Start with API sync & silent auto-poll every 4 seconds
+    syncFromApi().then(() => {
+      previousSubCount = submissionList.length;
+      setInterval(syncFromApiSilently, 4000);
+    });
 </body>
 </html>

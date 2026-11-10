@@ -17,10 +17,10 @@ app/build/
 
 # Android Gradle Artifacts
 app/android/.gradle/
-app/android/local.properties
-app/android/app/build/
-
-# Windows C++ Artifacts
+# Large binaries (built APKs can be generated with flutter build apk)
+*.rar
+*.zip
+*.apk
 app/windows/flutter/ephemeral/
 
 # Large binaries (built APKs can be generated with flutter build apk)

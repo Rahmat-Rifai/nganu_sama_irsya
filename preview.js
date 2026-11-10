@@ -13,6 +13,7 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.pdf': 'application/pdf',
+  '.apk': 'application/vnd.android.package-archive',
 };
 
 // ================= IN-MEMORY API STATE (Shared across Web & Mobile) =================
