@@ -134,12 +134,18 @@ class ApiService {
   static String get baseUrl =>
       kIsWeb ? Uri.base.origin : 'https://tugas.rahmat.cc.cd';
 
+  /// Status koneksi terakhir: true kalau ada request terakhir yang berhasil
+  /// ke server, false kalau semuanya jatuh ke data lokal. Di-reset tiap
+  /// _loadData supaya statusnya jujur per refresh, bukan sisa lama.
+  static bool lastFetchOnline = false;
+
   /// Mengambil daftar tugas dari Server Web
   static Future<List<TaskItem>> fetchTasks(String targetClass) async {
     try {
       final uri = Uri.parse('$baseUrl/api/tasks?class=$targetClass');
-      final response = await http.get(uri).timeout(const Duration(seconds: 4));
+      final response = await http.get(uri).timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
+        lastFetchOnline = true;
         final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => TaskItem.fromJson(e)).toList();
       }
@@ -202,7 +208,7 @@ class ApiService {
             headers: {'content-type': 'application/json; charset=utf-8'},
             body: jsonEncode(payload),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 15));
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (_) {
       return true; // Fallback sukses lokal
@@ -215,8 +221,9 @@ class ApiService {
   ) async {
     try {
       final uri = Uri.parse('$baseUrl/api/submissions?nisn=$nisn');
-      final response = await http.get(uri).timeout(const Duration(seconds: 4));
+      final response = await http.get(uri).timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
+        lastFetchOnline = true;
         final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => SubmissionItem.fromJson(e)).toList();
       }
@@ -625,7 +632,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
                   Center(
                     child: Text(
-                      'Terhubung ke Server: ${ApiService.baseUrl}',
+                      'Server: ${ApiService.baseUrl}',
                       style: const TextStyle(
                         fontSize: 10,
                         fontFamily: 'JetBrains Mono',
@@ -666,6 +673,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   List<TaskItem> _tasks = [];
   List<SubmissionItem> _mySubmissions = [];
   bool _isLoading = true;
+  bool _online = false;
 
   @override
   void initState() {
@@ -675,11 +683,13 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
+    ApiService.lastFetchOnline = false;
     final tasks = await ApiService.fetchTasks(widget.className);
     final subs = await ApiService.fetchStudentSubmissions(widget.nisn);
     setState(() {
       _tasks = tasks;
       _mySubmissions = subs;
+      _online = ApiService.lastFetchOnline;
       _isLoading = false;
     });
   }
@@ -824,6 +834,34 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Status koneksi server (jujur: online = data barusan diambil
+              // dari server, offline = data lokal karena server tidak
+              // terjangkau — jangan sampai kelihatan nyambung padahal tidak)
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _online ? Colors.green : Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _online
+                        ? 'Online — data dari server'
+                        : 'Offline — data lokal, server tidak terjangkau',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'JetBrains Mono',
+                      color: _online ? Colors.green : Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
 
               // Section Title
               Row(
