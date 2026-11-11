@@ -215,9 +215,16 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- Data Kelas
 INSERT INTO `classes` (`id`, `name`, `academic_year`) VALUES
-(1, 'X RPL 1', '2024/2025'),
-(2, 'X RPL 2', '2024/2025'),
-(3, 'XI RPL 1', '2024/2025');
+(1, 'XI RPL', '2024/2025'),
+(2, 'XI DPIB', '2024/2025'),
+(3, 'XI Animasi', '2024/2025'),
+(4, 'XI TKR A', '2024/2025'),
+(5, 'XI TKR B', '2024/2025'),
+(6, 'XI TKR C', '2024/2025'),
+(7, 'XI TSM A', '2024/2025'),
+(8, 'XI TSM B', '2024/2025'),
+(9, 'XI TSM C', '2024/2025'),
+(10, 'XI PBS', '2024/2025');
 
 -- Data Mata Pelajaran
 INSERT INTO `subjects` (`id`, `name`, `code`) VALUES
