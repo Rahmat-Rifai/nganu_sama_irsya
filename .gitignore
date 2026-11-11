@@ -20,6 +20,10 @@ app/android/.gradle/
 # Large binaries (built APKs can be generated with flutter build apk)
 *.rar
 *.zip
+
+# Hosting lokal (VM): output build web Flutter + pid server
+app-web/
+preview-server.pid
 *.apk
 app/windows/flutter/ephemeral/
 

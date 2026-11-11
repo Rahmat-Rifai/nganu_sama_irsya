@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 void main() {
@@ -118,21 +119,20 @@ class SubmissionItem {
 /// SERVICE JARINGAN: KONEKSI APLIKASI KE SERVER WEB (HTTP API)
 /// ============================================================================
 class ApiService {
-  // Default URL: http://localhost:3000 (bekerja langsung di HP fisik via USB adb reverse)
-  static String baseUrl = 'http://localhost:3000';
-
-  static final HttpClient _client = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 4);
+  // Web (hosting): pakai origin halaman yang sedang dibuka, jadi API selalu
+  // satu origin dengan aplikasi. Android/HP fisik: tetap localhost:3000
+  // (via USB adb reverse) seperti semula.
+  static String get baseUrl =>
+      kIsWeb ? Uri.base.origin : 'http://localhost:3000';
 
   /// Mengambil daftar tugas dari Server Web
   static Future<List<TaskItem>> fetchTasks(String targetClass) async {
     try {
       final uri = Uri.parse('$baseUrl/api/tasks?class=$targetClass');
-      final request = await _client.getUrl(uri);
-      final response = await request.close();
+      final response =
+          await http.get(uri).timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
-        final body = await response.transform(utf8.decoder).join();
-        final List<dynamic> list = jsonDecode(body);
+        final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => TaskItem.fromJson(e)).toList();
       }
     } catch (_) {
@@ -176,8 +176,6 @@ class ApiService {
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/api/submissions');
-      final request = await _client.postUrl(uri);
-      request.headers.set('content-type', 'application/json; charset=utf-8');
       final Map<String, dynamic> payload = {
         'taskId': taskId,
         'student': student,
@@ -190,8 +188,11 @@ class ApiService {
       if (fileBytes != null && fileBytes.isNotEmpty) {
         payload['fileBase64'] = base64Encode(fileBytes);
       }
-      request.add(utf8.encode(jsonEncode(payload)));
-      final response = await request.close();
+      final response = await http
+          .post(uri,
+              headers: {'content-type': 'application/json; charset=utf-8'},
+              body: jsonEncode(payload))
+          .timeout(const Duration(seconds: 10));
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (_) {
       return true; // Fallback sukses lokal
@@ -202,11 +203,10 @@ class ApiService {
   static Future<List<SubmissionItem>> fetchStudentSubmissions(String nisn) async {
     try {
       final uri = Uri.parse('$baseUrl/api/submissions?nisn=$nisn');
-      final request = await _client.getUrl(uri);
-      final response = await request.close();
+      final response =
+          await http.get(uri).timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
-        final body = await response.transform(utf8.decoder).join();
-        final List<dynamic> list = jsonDecode(body);
+        final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => SubmissionItem.fromJson(e)).toList();
       }
     } catch (_) {}

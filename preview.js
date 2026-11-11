@@ -261,6 +261,7 @@ const server = http.createServer(async (req, res) => {
   // ================= STATIC FILES =================
   let reqPath = decodeURI(pathname);
   if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
+  if (reqPath.endsWith('/')) reqPath += 'index.html'; // hosting: /app-web/ -> /app-web/index.html
   
   const filePath = path.join(__dirname, reqPath);
   
