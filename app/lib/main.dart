@@ -124,6 +124,52 @@ class SubmissionItem {
   }
 }
 
+class AuthUser {
+  final String name;
+  final String identifier;
+  final String className;
+  final String role;
+
+  AuthUser({
+    required this.name,
+    required this.identifier,
+    required this.className,
+    required this.role,
+  });
+
+  factory AuthUser.fromJson(Map<String, dynamic> json, String defaultRole) {
+    return AuthUser(
+      name: json['name'] as String? ?? 'Siswa',
+      identifier:
+          (json['nisn'] ?? json['nip'] ?? json['email'] ?? '') as String,
+      className: json['class'] as String? ?? 'XI RPL',
+      role: json['role'] as String? ?? defaultRole,
+    );
+  }
+}
+
+class LoginResult {
+  final bool isSuccess;
+  final bool isAuthError;
+  final String? errorMessage;
+  final AuthUser? user;
+
+  LoginResult.success(this.user)
+      : isSuccess = true,
+        isAuthError = false,
+        errorMessage = null;
+
+  LoginResult.authFailed(this.errorMessage)
+      : isSuccess = false,
+        isAuthError = true,
+        user = null;
+
+  LoginResult.networkError([this.errorMessage])
+      : isSuccess = false,
+        isAuthError = false,
+        user = null;
+}
+
 /// ============================================================================
 /// SERVICE JARINGAN: KONEKSI APLIKASI KE SERVER WEB (HTTP API)
 /// ============================================================================
@@ -138,6 +184,45 @@ class ApiService {
   /// ke server, false kalau semuanya jatuh ke data lokal. Di-reset tiap
   /// _loadData supaya statusnya jujur per refresh, bukan sisa lama.
   static bool lastFetchOnline = false;
+  /// Melakukan autentikasi masuk akun (siswa/guru) ke Server Web
+  static Future<LoginResult> login({
+    required String identifier,
+    required String password,
+    required String role,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/api/auth/login');
+      final response = await http
+          .post(
+            uri,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+            body: jsonEncode({
+              'identifier': identifier,
+              'password': password,
+              'role': role,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        lastFetchOnline = true;
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['user'] != null) {
+          return LoginResult.success(
+            AuthUser.fromJson(data['user'] as Map<String, dynamic>, role),
+          );
+        }
+      } else if (response.statusCode == 401) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final err = data['error'] as String? ?? 'NISN / kata sandi salah.';
+        return LoginResult.authFailed(err);
+      }
+    } catch (_) {
+      // Jaringan bermasalah atau server offline
+    }
+    return LoginResult.networkError('Tidak dapat terhubung ke server.');
+  }
+
 
   /// Mengambil daftar tugas dari Server Web
   static Future<List<TaskItem>> fetchTasks(String targetClass) async {
@@ -281,7 +366,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _idController = TextEditingController(text: '0081293812');
+  final _idController = TextEditingController(text: '007129001');
   final _passwordController = TextEditingController(text: 'password123');
   bool _isStudent = true;
   bool _isLoading = false;
@@ -289,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _fillStudent() {
     setState(() {
       _isStudent = true;
-      _idController.text = '0081293812';
+      _idController.text = '007129001';
       _passwordController.text = 'password123';
     });
   }
@@ -303,19 +388,77 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleLogin() async {
+    final id = _idController.text.trim();
+    final pass = _passwordController.text.trim();
+
+    if (id.isEmpty || pass.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mohon isi identifier dan kata sandi')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 300));
-    setState(() => _isLoading = false);
+
+    final result = await ApiService.login(
+      identifier: id,
+      password: pass,
+      role: _isStudent ? 'student' : 'teacher',
+    );
 
     if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (result.isAuthError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.errorMessage ?? 'Autentikasi gagal.'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
+      return;
+    }
+
+    if (result.isSuccess && result.user != null) {
+      final user = result.user!;
+      if (_isStudent) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => StudentDashboardScreen(
+              studentName: user.name,
+              nisn: user.identifier,
+              className: user.className,
+            ),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TeacherMobileScreen(teacherName: user.name),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Kasus gagal jaringan/timeout: fallback offline
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Server tidak terjangkau. Masuk dalam mode offline.'),
+        backgroundColor: AppColors.warning,
+      ),
+    );
 
     if (_isStudent) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const StudentDashboardScreen(
-            studentName: 'Ahmad Rizky Pratama',
-            nisn: '0081293812',
+          builder: (_) => StudentDashboardScreen(
+            studentName:
+                id == '007129001' ? 'Alfendista Ismail' : 'Siswa Offline',
+            nisn: id,
             className: 'XI RPL',
           ),
         ),
@@ -324,8 +467,10 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) =>
-              const TeacherMobileScreen(teacherName: 'Drs. Budi Santoso'),
+          builder: (_) => TeacherMobileScreen(
+            teacherName:
+                id.contains('budi') ? 'Drs. Budi Santoso' : 'Guru Offline',
+          ),
         ),
       );
     }
