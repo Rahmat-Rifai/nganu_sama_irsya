@@ -1,37 +1,46 @@
 import 'dart:convert';
-import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
+
 void main() {
   runApp(const PngumpulApp());
 }
 
 /// ============================================================================
-/// SISTEM DESAIN & WARNA PNGUMPUL (AFRICAN VIOLET PALETTE)
+/// SISTEM DESAIN & WARNA — GOOGLE DRIVE (sama seperti panel web terbaru)
+/// Token diambil dari admin.html / login.html / index.html:
+/// canvas terang, surface putih, border abu tipis, teks gelap, aksen biru.
 /// ============================================================================
 class AppColors {
-  static const Color canvas = Color(0xFF0C0A10);
-  static const Color surface = Color(0xFF14101B);
-  static const Color surfaceElevated = Color(0xFF1B1625);
-  static const Color surfaceHover = Color(0xFF221B2F);
-  static const Color border = Color(0xFF261F33);
-  static const Color borderHover = Color(0xFF3D3251);
-  static const Color text = Color(0xFFF6F3F9);
-  static const Color muted = Color(0xFF9F95AD);
-  static const Color subtle = Color(0xFF6B6378);
+  static const Color canvas = Color(0xFFF8FAFD);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceElevated = Color(0xFFF1F3F4);
+  static const Color surfaceHover = Color(0xFFF1F3F4);
+  static const Color border = Color(0xFFDADCE0);
+  static const Color borderHover = Color(0xFFBDC1C6);
+  static const Color text = Color(0xFF202124);
+  static const Color muted = Color(0xFF5F6368);
+  static const Color subtle = Color(0xFF80868B);
 
-  // Palet Pilihan Pengguna
-  static const Color violet = Color(0xFFB284BE); // African Violet (Primary)
-  static const Color violetHover = Color(0xFFA16FAB);
-  static const Color pastel = Color(0xFFBBA3D9); // Light Pastel Purple
-  static const Color pale = Color(0xFFEDDAF2); // Pale Purple
+  // Aksen utama (biru Drive) + warna berkas Drive
+  static const Color blue = Color(0xFF1A73E8);
+  static const Color blueHover = Color(0xFF1557BF);
+  static const Color blueLight = Color(0xFFE8F0FE);
+  static const Color blueActive = Color(0xFFC2E7FF);
+  static const Color blueActiveText = Color(0xFF001D35);
+  static const Color folder = Color(0xFFFBBC04);
+  static const Color pdf = Color(0xFFEA4335);
+  static const Color driveGreen = Color(0xFF34A853);
+  static const Color drivePurple = Color(0xFFA142F4);
+  static const Color driveOrange = Color(0xFFFA7B17);
 
-  static const Color success = Color(0xFF81C995);
-  static const Color warning = Color(0xFFF4C66A);
-  static const Color danger = Color(0xFFFF8A80);
+  static const Color success = Color(0xFF1E8E3E);
+  static const Color warning = Color(0xFFE37400);
+  static const Color danger = Color(0xFFD93025);
 }
 
 /// Model Tugas
@@ -129,8 +138,7 @@ class ApiService {
   static Future<List<TaskItem>> fetchTasks(String targetClass) async {
     try {
       final uri = Uri.parse('$baseUrl/api/tasks?class=$targetClass');
-      final response =
-          await http.get(uri).timeout(const Duration(seconds: 4));
+      final response = await http.get(uri).timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => TaskItem.fromJson(e)).toList();
@@ -159,7 +167,7 @@ class ApiService {
         desc: "Rancang ERD sistem database relasional minimal 8 tabel relasi lengkap.",
         submittedCount: 0,
         totalStudents: 30,
-      )
+      ),
     ];
   }
 
@@ -189,9 +197,11 @@ class ApiService {
         payload['fileBase64'] = base64Encode(fileBytes);
       }
       final response = await http
-          .post(uri,
-              headers: {'content-type': 'application/json; charset=utf-8'},
-              body: jsonEncode(payload))
+          .post(
+            uri,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+            body: jsonEncode(payload),
+          )
           .timeout(const Duration(seconds: 10));
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (_) {
@@ -200,11 +210,12 @@ class ApiService {
   }
 
   /// Mengambil status pengumpulan siswa dari Server Web
-  static Future<List<SubmissionItem>> fetchStudentSubmissions(String nisn) async {
+  static Future<List<SubmissionItem>> fetchStudentSubmissions(
+    String nisn,
+  ) async {
     try {
       final uri = Uri.parse('$baseUrl/api/submissions?nisn=$nisn');
-      final response =
-          await http.get(uri).timeout(const Duration(seconds: 4));
+      final response = await http.get(uri).timeout(const Duration(seconds: 4));
       if (response.statusCode == 200) {
         final List<dynamic> list = jsonDecode(response.body);
         return list.map((e) => SubmissionItem.fromJson(e)).toList();
@@ -223,7 +234,7 @@ class ApiService {
         answerText: "Laporan pengerjaan modul login dan dashboard responsif.",
         timeFormatted: "10 Nov, 14:20",
         score: null,
-      )
+      ),
     ];
   }
 }
@@ -241,8 +252,8 @@ class PngumpulApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.canvas,
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.violet,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.blue,
           surface: AppColors.surface,
         ),
         fontFamily: 'Plus Jakarta Sans',
@@ -306,9 +317,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const TeacherMobileScreen(
-            teacherName: 'Drs. Budi Santoso',
-          ),
+          builder: (_) =>
+              const TeacherMobileScreen(teacherName: 'Drs. Budi Santoso'),
         ),
       );
     }
@@ -357,6 +367,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.border),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x14000000),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text(
                           'Masuk Akun',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.text,
                           ),
@@ -383,21 +400,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: AppColors.canvas,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.border),
+                            color: AppColors.surfaceElevated,
+                            borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () => setState(() => _isStudent = true),
+                                  onTap: () =>
+                                      setState(() => _isStudent = true),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: _isStudent ? AppColors.surfaceElevated : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: _isStudent ? Border.all(color: AppColors.border) : null,
+                                      color: _isStudent
+                                          ? AppColors.blueActive
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       'Siswa',
@@ -405,7 +425,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: _isStudent ? AppColors.pale : AppColors.muted,
+                                        color: _isStudent
+                                            ? AppColors.blueActiveText
+                                            : AppColors.muted,
                                       ),
                                     ),
                                   ),
@@ -413,13 +435,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () => setState(() => _isStudent = false),
+                                  onTap: () =>
+                                      setState(() => _isStudent = false),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: !_isStudent ? AppColors.surfaceElevated : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: !_isStudent ? Border.all(color: AppColors.border) : null,
+                                      color: !_isStudent
+                                          ? AppColors.blueActive
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       'Guru',
@@ -427,7 +453,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: !_isStudent ? AppColors.pale : AppColors.muted,
+                                        color: !_isStudent
+                                            ? AppColors.blueActiveText
+                                            : AppColors.muted,
                                       ),
                                     ),
                                   ),
@@ -442,31 +470,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         Text(
                           _isStudent ? 'NISN SISWA' : 'EMAIL GURU / NIP',
                           style: const TextStyle(
-                            fontSize: 10,
-                            fontFamily: 'JetBrains Mono',
-                            color: AppColors.muted,
-                            letterSpacing: 0.5,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.text,
                           ),
                         ),
                         const SizedBox(height: 6),
                         TextField(
                           controller: _idController,
-                          style: const TextStyle(fontSize: 13, color: AppColors.text),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.text,
+                          ),
                           decoration: InputDecoration(
                             isDense: true,
                             filled: true,
-                            fillColor: AppColors.canvas,
+                            fillColor: AppColors.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.border),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.border),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.violet),
+                              borderSide: const BorderSide(
+                                color: AppColors.blue,
+                              ),
                             ),
                           ),
                         ),
@@ -486,22 +522,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextField(
                           controller: _passwordController,
                           obscureText: true,
-                          style: const TextStyle(fontSize: 13, color: AppColors.text),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.text,
+                          ),
                           decoration: InputDecoration(
                             isDense: true,
                             filled: true,
-                            fillColor: AppColors.canvas,
+                            fillColor: AppColors.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.border),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.border),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.violet),
+                              borderSide: const BorderSide(
+                                color: AppColors.blue,
+                              ),
                             ),
                           ),
                         ),
@@ -510,14 +555,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Submit Button
                         SizedBox(
                           width: double.infinity,
-                          height: 42,
+                          height: 48,
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleLogin,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.violet,
-                              foregroundColor: AppColors.canvas,
+                              backgroundColor: AppColors.blue,
+                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
                             ),
@@ -525,11 +570,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.canvas),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
                                   )
                                 : const Text(
                                     'Masuk ke Sistem',
-                                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                    ),
                                   ),
                           ),
                         ),
@@ -541,13 +592,29 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             TextButton(
                               onPressed: _fillStudent,
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              child: const Text('Akun Siswa', style: TextStyle(fontSize: 11, color: AppColors.pastel)),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                              ),
+                              child: const Text(
+                                'Akun Siswa',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.blue,
+                                ),
+                              ),
                             ),
                             TextButton(
                               onPressed: _fillTeacher,
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              child: const Text('Akun Guru', style: TextStyle(fontSize: 11, color: AppColors.pastel)),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                              ),
+                              child: const Text(
+                                'Akun Guru',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.blue,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -559,7 +626,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: Text(
                       'Terhubung ke Server: ${ApiService.baseUrl}',
-                      style: const TextStyle(fontSize: 10, fontFamily: 'JetBrains Mono', color: AppColors.subtle),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontFamily: 'JetBrains Mono',
+                        color: AppColors.subtle,
+                      ),
                     ),
                   ),
                 ],
@@ -653,6 +724,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
         title: Row(
           children: [
             CustomPaint(
@@ -662,13 +734,17 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             const SizedBox(width: 8),
             const Text(
               'Pngumpul',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.text),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: AppColors.text,
+              ),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, size: 18, color: AppColors.pastel),
+            icon: const Icon(Icons.refresh, size: 18, color: AppColors.blue),
             onPressed: _loadData,
             tooltip: 'Segarkan Tugas dari Server',
           ),
@@ -685,7 +761,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadData,
-        color: AppColors.violet,
+        color: AppColors.blue,
         backgroundColor: AppColors.surface,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -698,7 +774,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.border),
                 ),
                 child: Row(
@@ -707,14 +783,16 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceElevated,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColors.border),
+                        color: AppColors.blueLight,
+                        shape: BoxShape.circle,
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         widget.studentName.substring(0, 2).toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.pastel),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.blue,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -724,12 +802,20 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                         children: [
                           Text(
                             widget.studentName,
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.text),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.text,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'NISN: ${widget.nisn} • ${widget.className}',
-                            style: const TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.muted),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontFamily: 'JetBrains Mono',
+                              color: AppColors.muted,
+                            ),
                           ),
                         ],
                       ),
@@ -746,16 +832,18 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   const Text(
                     'TUGAS KELAS ANDA',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'JetBrains Mono',
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.muted,
-                      letterSpacing: 0.5,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text,
                     ),
                   ),
                   Text(
                     '${_tasks.length} Tugas',
-                    style: const TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.subtle),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontFamily: 'JetBrains Mono',
+                      color: AppColors.subtle,
+                    ),
                   ),
                 ],
               ),
@@ -766,7 +854,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(32),
-                    child: CircularProgressIndicator(color: AppColors.violet),
+                    child: CircularProgressIndicator(color: AppColors.blue),
                   ),
                 )
               else if (_tasks.isEmpty)
@@ -774,11 +862,14 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppColors.border),
                   ),
                   child: const Center(
-                    child: Text('Tidak ada tugas untuk kelas Anda.', style: TextStyle(color: AppColors.muted, fontSize: 12)),
+                    child: Text(
+                      'Tidak ada tugas untuk kelas Anda.',
+                      style: TextStyle(color: AppColors.muted, fontSize: 12),
+                    ),
                   ),
                 )
               else
@@ -789,8 +880,12 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final task = _tasks[index];
-                    final isSubmitted = _mySubmissions.any((s) => s.taskId == task.id);
-                    final sub = isSubmitted ? _mySubmissions.firstWhere((s) => s.taskId == task.id) : null;
+                    final isSubmitted = _mySubmissions.any(
+                      (s) => s.taskId == task.id,
+                    );
+                    final sub = isSubmitted
+                        ? _mySubmissions.firstWhere((s) => s.taskId == task.id)
+                        : null;
 
                     return GestureDetector(
                       onTap: () => _openTaskDetail(task),
@@ -798,7 +893,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColors.border),
                         ),
                         child: Column(
@@ -812,28 +907,39 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontFamily: 'JetBrains Mono',
-                                    color: AppColors.pastel,
+                                    color: AppColors.blue,
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: sub?.score != null
                                         ? AppColors.success.withOpacity(0.15)
-                                        : (isSubmitted ? AppColors.pastel.withOpacity(0.15) : AppColors.warning.withOpacity(0.15)),
-                                    borderRadius: BorderRadius.circular(4),
+                                        : (isSubmitted
+                                              ? AppColors.blue.withOpacity(0.15)
+                                              : AppColors.warning.withOpacity(
+                                                  0.15,
+                                                )),
+                                    borderRadius: BorderRadius.circular(999),
                                   ),
                                   child: Text(
                                     sub?.score != null
                                         ? 'Nilai: ${sub!.score}'
-                                        : (isSubmitted ? 'Terkumpul' : 'Belum Kumpul'),
+                                        : (isSubmitted
+                                              ? 'Terkumpul'
+                                              : 'Belum Kumpul'),
                                     style: TextStyle(
                                       fontSize: 9,
                                       fontFamily: 'JetBrains Mono',
                                       fontWeight: FontWeight.w700,
                                       color: sub?.score != null
                                           ? AppColors.success
-                                          : (isSubmitted ? AppColors.pale : AppColors.warning),
+                                          : (isSubmitted
+                                                ? AppColors.blueActiveText
+                                                : AppColors.warning),
                                     ),
                                   ),
                                 ),
@@ -842,7 +948,11 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                             const SizedBox(height: 6),
                             Text(
                               task.title,
-                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.text),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.text,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Row(
@@ -850,9 +960,17 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                               children: [
                                 Text(
                                   'Tenggat: ${task.dueFormatted}',
-                                  style: const TextStyle(fontSize: 10, fontFamily: 'JetBrains Mono', color: AppColors.muted),
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontFamily: 'JetBrains Mono',
+                                    color: AppColors.muted,
+                                  ),
                                 ),
-                                const Icon(Icons.chevron_right, size: 16, color: AppColors.pastel),
+                                const Icon(
+                                  Icons.chevron_right,
+                                  size: 16,
+                                  color: AppColors.blue,
+                                ),
                               ],
                             ),
                           ],
@@ -913,15 +1031,29 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   void _detectFileType(String name) {
     final lower = name.toLowerCase();
-    if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.webp') || lower.endsWith('.svg')) {
+    if (lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.svg')) {
       _fileCategory = 'GAMBAR';
-    } else if (lower.endsWith('.zip') || lower.endsWith('.rar') || lower.endsWith('.7z') || lower.endsWith('.tar')) {
+    } else if (lower.endsWith('.zip') ||
+        lower.endsWith('.rar') ||
+        lower.endsWith('.7z') ||
+        lower.endsWith('.tar')) {
       _fileCategory = 'ARSIP';
     } else if (lower.endsWith('.pdf')) {
       _fileCategory = 'PDF';
-    } else if (lower.endsWith('.html') || lower.endsWith('.css') || lower.endsWith('.js') || lower.endsWith('.dart') || lower.endsWith('.py') || lower.endsWith('.sql')) {
+    } else if (lower.endsWith('.html') ||
+        lower.endsWith('.css') ||
+        lower.endsWith('.js') ||
+        lower.endsWith('.dart') ||
+        lower.endsWith('.py') ||
+        lower.endsWith('.sql')) {
       _fileCategory = 'KODE';
-    } else if (lower.endsWith('.docx') || lower.endsWith('.doc') || lower.endsWith('.txt')) {
+    } else if (lower.endsWith('.docx') ||
+        lower.endsWith('.doc') ||
+        lower.endsWith('.txt')) {
       _fileCategory = 'DOKUMEN';
     } else {
       _fileCategory = 'BERKAS';
@@ -930,16 +1062,28 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   IconData _getFileIcon(String filename) {
     final lower = filename.toLowerCase();
-    if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.webp') || lower.endsWith('.svg')) {
+    if (lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.svg')) {
       return Icons.image_outlined;
     }
-    if (lower.endsWith('.zip') || lower.endsWith('.rar') || lower.endsWith('.7z') || lower.endsWith('.tar')) {
+    if (lower.endsWith('.zip') ||
+        lower.endsWith('.rar') ||
+        lower.endsWith('.7z') ||
+        lower.endsWith('.tar')) {
       return Icons.archive_outlined;
     }
     if (lower.endsWith('.pdf')) {
       return Icons.picture_as_pdf_outlined;
     }
-    if (lower.endsWith('.html') || lower.endsWith('.css') || lower.endsWith('.js') || lower.endsWith('.dart') || lower.endsWith('.py') || lower.endsWith('.sql')) {
+    if (lower.endsWith('.html') ||
+        lower.endsWith('.css') ||
+        lower.endsWith('.js') ||
+        lower.endsWith('.dart') ||
+        lower.endsWith('.py') ||
+        lower.endsWith('.sql')) {
       return Icons.code_outlined;
     }
     return Icons.description_outlined;
@@ -964,7 +1108,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           _selectedFileName = file.name;
           _selectedFileBytes = bytes;
           if (sizeInBytes >= 1024 * 1024) {
-            _fileSize = '${(sizeInBytes / (1024 * 1024)).toStringAsFixed(2)} MB';
+            _fileSize =
+                '${(sizeInBytes / (1024 * 1024)).toStringAsFixed(2)} MB';
           } else {
             _fileSize = '${(sizeInBytes / 1024).toStringAsFixed(1)} KB';
           }
@@ -974,7 +1119,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: AppColors.surfaceElevated,
+              backgroundColor: AppColors.text,
               content: Text('Berkas dipilih: ${file.name}'),
               duration: const Duration(seconds: 2),
             ),
@@ -989,6 +1134,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       }
     }
   }
+
   /// Mengambil foto langsung dari Kamera HP
   Future<void> _capturePhotoFromCamera() async {
     try {
@@ -1006,7 +1152,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           _selectedFileName = name;
           _selectedFileBytes = bytes;
           if (bytes.length >= 1024 * 1024) {
-            _fileSize = '${(bytes.length / (1024 * 1024)).toStringAsFixed(2)} MB';
+            _fileSize =
+                '${(bytes.length / (1024 * 1024)).toStringAsFixed(2)} MB';
           } else {
             _fileSize = '${(bytes.length / 1024).toStringAsFixed(1)} KB';
           }
@@ -1016,7 +1163,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: AppColors.surfaceElevated,
+              backgroundColor: AppColors.text,
               content: Text('Foto kamera terlampir: $name'),
               duration: const Duration(seconds: 2),
             ),
@@ -1031,6 +1178,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       }
     }
   }
+
   void _handleSubmit() async {
     if (_answerController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1047,7 +1195,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       nisn: widget.nisn,
       taskClass: widget.className,
       taskTitle: widget.task.title,
-      fileName: _selectedFileName ?? 'tugas_${widget.studentName.split(' ')[0]}.pdf',
+      fileName:
+          _selectedFileName ?? 'tugas_${widget.studentName.split(' ')[0]}.pdf',
       answerText: _answerController.text.trim(),
       fileBytes: _selectedFileBytes,
     );
@@ -1058,7 +1207,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: AppColors.surfaceElevated,
+          backgroundColor: AppColors.text,
           content: Text('Tugas berhasil dikirim ke Server Web Pngumpul!'),
         ),
       );
@@ -1074,7 +1223,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
-        title: Text(widget.task.subject, style: const TextStyle(fontSize: 14, color: AppColors.text)),
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
+        title: Text(
+          widget.task.subject,
+          style: const TextStyle(fontSize: 14, color: AppColors.text),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -1084,12 +1237,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             // Task Title & Due
             Text(
               widget.task.title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.text),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppColors.text,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
               'Tenggat: ${widget.task.dueFormatted}',
-              style: const TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.warning),
+              style: const TextStyle(
+                fontSize: 11,
+                fontFamily: 'JetBrains Mono',
+                color: AppColors.warning,
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -1098,7 +1259,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
               ),
               child: Column(
@@ -1106,12 +1267,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 children: [
                   const Text(
                     'PETUNJUK PENGERJAAN',
-                    style: TextStyle(fontSize: 10, fontFamily: 'JetBrains Mono', color: AppColors.muted),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     widget.task.desc,
-                    style: const TextStyle(fontSize: 12, color: AppColors.text, height: 1.5),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.text,
+                      height: 1.5,
+                    ),
                   ),
                 ],
               ),
@@ -1124,7 +1293,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.success.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.success.withOpacity(0.3)),
                 ),
                 child: Column(
@@ -1133,13 +1302,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('NILAI EVALUASI GURU', style: TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.success)),
-                        Text('${sub!.score} / 100', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.success)),
+                        const Text(
+                          'NILAI EVALUASI GURU',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.success,
+                          ),
+                        ),
+                        Text(
+                          '${sub!.score} / 100',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.success,
+                          ),
+                        ),
                       ],
                     ),
                     if (sub.feedback.isNotEmpty) ...[
                       const SizedBox(height: 8),
-                      Text('Catatan: "${sub.feedback}"', style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.text)),
+                      Text(
+                        'Catatan: "${sub.feedback}"',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          color: AppColors.text,
+                        ),
+                      ),
                     ],
                   ],
                 ),
@@ -1150,7 +1340,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             // Submission Form
             const Text(
               'JAWABAN & BERKAS TUGAS',
-              style: TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.muted),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: AppColors.text,
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -1161,7 +1355,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               style: const TextStyle(fontSize: 12, color: AppColors.text),
               decoration: InputDecoration(
                 hintText: 'Tuliskan ringkasan jawaban Anda...',
-                hintStyle: const TextStyle(fontSize: 12, color: AppColors.subtle),
+                hintStyle: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.subtle,
+                ),
                 filled: true,
                 fillColor: AppColors.surface,
                 border: OutlineInputBorder(
@@ -1174,7 +1371,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.violet),
+                  borderSide: const BorderSide(color: AppColors.blue),
                 ),
               ),
             ),
@@ -1185,7 +1382,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               children: [
                 const Text(
                   'BERKAS TUGAS',
-                  style: TextStyle(fontSize: 11, fontFamily: 'JetBrains Mono', color: AppColors.muted),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.text,
+                  ),
                 ),
                 if (_selectedFileName != null)
                   Row(
@@ -1194,13 +1395,24 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         onTap: _capturePhotoFromCamera,
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(Icons.camera_alt_outlined, size: 16, color: AppColors.violet),
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            size: 16,
+                            color: AppColors.blue,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 6),
                       GestureDetector(
                         onTap: _pickFileFromExplorer,
-                        child: const Text('Ganti (+)', style: TextStyle(fontSize: 11, color: AppColors.violet, fontWeight: FontWeight.w600)),
+                        child: const Text(
+                          'Ganti (+)',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -1217,10 +1429,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     child: GestureDetector(
                       onTap: _capturePhotoFromCamera,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColors.border),
                         ),
                         child: Column(
@@ -1229,20 +1444,31 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: AppColors.violet.withOpacity(0.15),
+                                color: AppColors.blue.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.camera_alt, size: 20, color: AppColors.violet),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 20,
+                                color: AppColors.blue,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             const Text(
                               'Foto Tugas',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.text),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.text,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             const Text(
                               'Jepret Kamera HP',
-                              style: TextStyle(fontSize: 10, color: AppColors.muted),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.muted,
+                              ),
                             ),
                           ],
                         ),
@@ -1255,10 +1481,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     child: GestureDetector(
                       onTap: _pickFileFromExplorer,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColors.border),
                         ),
                         child: Column(
@@ -1267,20 +1496,31 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: AppColors.pastel.withOpacity(0.15),
+                                color: AppColors.blue.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.add, size: 22, color: AppColors.pastel),
+                              child: const Icon(
+                                Icons.add,
+                                size: 22,
+                                color: AppColors.blue,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             const Text(
                               'Pilih Berkas (+)',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.text),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.text,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             const Text(
                               'PDF, ZIP, File HP',
-                              style: TextStyle(fontSize: 10, color: AppColors.muted),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.muted,
+                              ),
                             ),
                           ],
                         ),
@@ -1292,10 +1532,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ] else ...[
               // Attached File Card
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.border),
                 ),
                 child: Row(
@@ -1304,10 +1547,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       width: 38,
                       height: 38,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceElevated,
+                        color: AppColors.blueLight,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(_getFileIcon(_selectedFileName!), size: 20, color: AppColors.pastel),
+                      child: Icon(
+                        _getFileIcon(_selectedFileName!),
+                        size: 20,
+                        color: AppColors.blue,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -1329,20 +1576,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceElevated,
-                                  borderRadius: BorderRadius.circular(3),
+                                  color: AppColors.blueLight,
+                                  borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
                                   _fileCategory,
-                                  style: const TextStyle(fontSize: 9, fontFamily: 'JetBrains Mono', color: AppColors.pastel, fontWeight: FontWeight.w700),
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontFamily: 'JetBrains Mono',
+                                    color: AppColors.blue,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                _fileSize.isNotEmpty ? _fileSize : 'Berkas Siap',
-                                style: const TextStyle(fontSize: 10, fontFamily: 'JetBrains Mono', color: AppColors.subtle),
+                                _fileSize.isNotEmpty
+                                    ? _fileSize
+                                    : 'Berkas Siap',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontFamily: 'JetBrains Mono',
+                                  color: AppColors.subtle,
+                                ),
                               ),
                             ],
                           ),
@@ -1350,7 +1611,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, size: 16, color: AppColors.subtle),
+                      icon: const Icon(
+                        Icons.close,
+                        size: 16,
+                        color: AppColors.subtle,
+                      ),
                       onPressed: () => setState(() {
                         _selectedFileName = null;
                         _selectedFileBytes = null;
@@ -1367,19 +1632,33 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             // Submit Button
             SizedBox(
               width: double.infinity,
-              height: 44,
+              height: 48,
               child: ElevatedButton(
                 onPressed: _isSubmitting ? null : _handleSubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.violet,
-                  foregroundColor: AppColors.canvas,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  backgroundColor: AppColors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: _isSubmitting
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.canvas))
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : Text(
-                        sub != null ? 'Perbarui Kiriman Tugas' : 'Kirim Tugas ke Server Web',
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        sub != null
+                            ? 'Perbarui Kiriman Tugas'
+                            : 'Kirim Tugas ke Server Web',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
               ),
             ),
@@ -1403,7 +1682,10 @@ class TeacherMobileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        title: const Text('Pngumpul Guru', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+        title: const Text(
+          'Pngumpul Guru',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, size: 18),
@@ -1430,13 +1712,21 @@ class TeacherMobileScreen extends StatelessWidget {
               Text(
                 'Selamat Datang, $teacherName',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.text),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.text,
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
                 'Panel Web Guru saat ini aktif di port 3000.\nGunakan browser untuk akses penuh.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppColors.muted, height: 1.5),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.muted,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
@@ -1454,8 +1744,8 @@ class PngumpulLogoPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
-    // 1. Base Squircle Container
-    final bgPaint = Paint()..color = const Color(0xFF171220);
+    // 1. Base Squircle Container (biru muda, gaya logo web)
+    final bgPaint = Paint()..color = AppColors.blueLight;
     final rrect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, size.width, size.height),
       Radius.circular(size.width * 0.25),
@@ -1464,13 +1754,13 @@ class PngumpulLogoPainter extends CustomPainter {
 
     // 2. Alignment hairline ring
     final ringPaint = Paint()
-      ..color = const Color(0xFF362D46)
+      ..color = AppColors.blueActive
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
     canvas.drawCircle(center, size.width * 0.33, ringPaint);
 
     // 3. Curvilinear 4-Point Star in African Violet
-    final starPaint = Paint()..color = AppColors.violet;
+    final starPaint = Paint()..color = AppColors.blue;
     final path = Path();
     final double cx = center.dx;
     final double cy = center.dy;
@@ -1487,8 +1777,8 @@ class PngumpulLogoPainter extends CustomPainter {
     path.close();
     canvas.drawPath(path, starPaint);
 
-    // 4. Inner Core Highlight in Pale Purple
-    final corePaint = Paint()..color = AppColors.pale;
+    // 4. Inner Core Highlight (putih)
+    final corePaint = Paint()..color = Colors.white;
     canvas.drawCircle(center, size.width * 0.08, corePaint);
   }
 
