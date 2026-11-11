@@ -129,10 +129,10 @@ class SubmissionItem {
 /// ============================================================================
 class ApiService {
   // Web (hosting): pakai origin halaman yang sedang dibuka, jadi API selalu
-  // satu origin dengan aplikasi. Android/HP fisik: tetap localhost:3000
-  // (via USB adb reverse) seperti semula.
+  // satu origin dengan aplikasi. Android/HP fisik: pakai URL publik server
+  // (https://tugas.rahmat.cc.cd) supaya app nyambung tanpa adb reverse.
   static String get baseUrl =>
-      kIsWeb ? Uri.base.origin : 'http://localhost:3000';
+      kIsWeb ? Uri.base.origin : 'https://tugas.rahmat.cc.cd';
 
   /// Mengambil daftar tugas dari Server Web
   static Future<List<TaskItem>> fetchTasks(String targetClass) async {
