@@ -228,7 +228,15 @@ const server = http.createServer(async (req, res) => {
     // 1. Auth Login
     if (pathname === '/api/auth/login' && req.method === 'POST') {
       const { identifier, password, role } = await parseBody(req);
-      if (identifier && identifier.includes('budi')) {
+      // Guru: identifier mengandung 'budi', sandi demo 'password123'
+      // (sama seperti prefill di login.html dan app).
+      if (identifier && identifier.toLowerCase().includes('budi')) {
+        if (password !== 'password123') {
+          return sendJson(res, 401, {
+            success: false,
+            error: 'Kata sandi salah.',
+          });
+        }
         return sendJson(res, 200, {
           success: true,
           user: {
@@ -240,18 +248,40 @@ const server = http.createServer(async (req, res) => {
             classes: ['XI RPL', 'XI DPIB', 'XI Animasi', 'XI TKR A', 'XI TKR B', 'XI TKR C', 'XI TSM A', 'XI TSM B', 'XI TSM C', 'XI PBS']
           }
         });
-      } else {
-        const student = studentList.find(s => s.nisn === identifier || s.name.toLowerCase().includes(identifier.toLowerCase())) || studentList[0];
-        return sendJson(res, 200, {
-          success: true,
-          user: {
-            name: student.name,
-            nisn: student.nisn,
-            class: student.class,
-            role: 'student'
-          }
+      }
+      // Siswa: identifier harus cocok PERSIS dengan salah satu NISN /
+      // username / email / nama di students_xi.json, dan sandi harus cocok
+      // dengan record siswa itu. Tanpa kecocokan -> 401, JANGAN fallback ke
+      // siswa pertama (fallback lama bikin login palsu: NISN ngawur pun
+      // "berhasil" sebagai orang lain).
+      const idNorm = String(identifier || '').trim().toLowerCase();
+      const student = studentList.find(s =>
+        s.nisn === identifier ||
+        s.username === identifier ||
+        s.email === identifier ||
+        s.name.toLowerCase() === idNorm
+      );
+      if (!student) {
+        return sendJson(res, 401, {
+          success: false,
+          error: 'NISN / nama tidak ditemukan.',
         });
       }
+      if (password !== student.password) {
+        return sendJson(res, 401, {
+          success: false,
+          error: 'Kata sandi salah.',
+        });
+      }
+      return sendJson(res, 200, {
+        success: true,
+        user: {
+          name: student.name,
+          nisn: student.nisn,
+          class: student.class,
+          role: 'student'
+        }
+      });
     }
 
     // 2. Tasks API
